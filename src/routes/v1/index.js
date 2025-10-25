@@ -3,8 +3,10 @@ const config = require("../../config/config");
 const authRoute = require("./auth.route");
 const userRoute = require("./user.route");
 const docsRoute = require("./docs.route");
-const employeeRoute = require("./employee.route");
 const serviceRoute = require("./service.route");
+const orderRoute = require("./order.route");
+const taskRoute = require("./task.route");
+const transactionRoute = require("./transaction.route");
 
 const router = express.Router();
 
@@ -17,15 +19,22 @@ const defaultRoutes = [
     path: "/users",
     route: userRoute,
   },
-  { 
-    path: "/users/employees",
-    route: employeeRoute,
-  },
   {
     path: "/services",
     route: serviceRoute,
   },
-
+  {
+    path: "/orders",
+    route: orderRoute,
+  },
+  {
+    path: "/tasks",
+    route: taskRoute,
+  },
+  {
+    path: "/transactions",
+    route: transactionRoute,
+  },
 ];
 
 const devRoutes = [

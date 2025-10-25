@@ -1,33 +1,33 @@
-const {Service} = require("../models");
+const { Service } = require("../models");
 
 const createService = async (serviceData) => {
-    return await Service.create(serviceData);
-}
+  return await Service.create(serviceData);
+};
 
 const deleteService = async (serviceId) => {
-    const service = await Service.findById(serviceId);
-    if (!service) {
-        throw new Error("Service not found");
-    }
-    return await Service.findByIdAndUpdate(serviceId, { isDeleted: true });
-}
+  const service = await Service.findById(serviceId);
+  if (!service) {
+    throw new Error("Service not found");
+  }
+  return await Service.findByIdAndUpdate(serviceId, { isDeleted: true });
+};
 
 const updateService = async (serviceId, updateData) => {
-    const service = await Service.findById(serviceId);
-    if (!service) {
-        throw new Error("Service not found");
-    }
-    Object.assign(service, updateData);
-    return await service.save();
-}
+  const service = await Service.findById(serviceId);
+  if (!service) {
+    throw new Error("Service not found");
+  }
+  Object.assign(service, updateData);
+  return await service.save();
+};
 
 const getService = async (serviceId) => {
-    const service = await Service.findById(serviceId);
-    if (!service) {
-        throw new Error("Service not found");
-    }
-    return service;
-}
+  const service = await Service.findById(serviceId);
+  if (!service) {
+    throw new Error("Service not found");
+  }
+  return service;
+};
 
 const queryServices = async (filter, options) => {
   const query = {};
@@ -50,13 +50,35 @@ const queryServices = async (filter, options) => {
 };
 
 const getAllServiceCategories = async () => {
-    const categories = await Service.distinct("subCategory");
-    return categories;
-}
+  const categories = await Service.distinct("subCategory");
+  return categories;
+};
+
+const getHomePageServices = async (category) => {
+  const services = await Service.find({ isDeleted: false , category }).select(
+    "title subCategory"
+  );
+  const uniqueTitles = [...new Set(services.map((s) => s.title))];
+  const uniqueCategories = [...new Set(services.map((s) => s.subCategory))];
+
+  return {
+    services: uniqueTitles,
+    categories: uniqueCategories,
+  };
+};
+
+const getServicesBySubCategory = async (subCategory) => {
+  const services = await Service.find({ subCategory, isDeleted: false });
+  return services;
+};
+
 module.exports = {
-    createService,
-    deleteService,
-    updateService,
-    getService,
-    queryServices,
+  createService,
+  deleteService,
+  updateService,
+  getService,
+  queryServices,
+  getAllServiceCategories,
+  getHomePageServices,
+  getServicesBySubCategory,
 };

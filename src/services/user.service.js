@@ -107,7 +107,6 @@ const isUpdateUser = async (userId, updateBody) => {
   await user.save();
   return user;
 };
-
 module.exports = {
   createUser,
   queryUsers,

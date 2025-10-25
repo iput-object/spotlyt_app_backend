@@ -13,10 +13,6 @@ const serviceSchema = mongoose.Schema(
       required: false,
       trim: true,
     },
-    service:{
-      type: String,
-      required: true,
-    },
     servicePrice: {
       type: Number,
       required: true,

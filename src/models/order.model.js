@@ -3,41 +3,42 @@ const { toJSON, paginate } = require("./plugins");
 
 const orderSchema = mongoose.Schema(
   {
-    client: {
+    service: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Service",
+      required: true,
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      default: 1,
+    },
+    link: {
+      type: String,
+      required: true,
+    },
+    prefs: {
+      type: String,
+      required: false,
+    },
+    amount: {
+      type: Number,
+      required: true,
+    },
+    transaction: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Transaction",
+      required: true,
+    },
+    orderedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    services: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Service",
-        required: true,
-      },
-    ],
-    paymentInfo: {
-      amount: {
-        type: Number,
-        required: true,
-      },
-      method: {
-        type: String,
-        required: true,
-      },
-      status: {
-        type: String,
-        enum: ["pending", "completed", "failed"],
-        default: "pending",
-      },
-    },
-    orderStatus: {
+    status: {
       type: String,
-      enum: ["placed", "in_progress", "completed", "cancelled"],
-      default: "placed",
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
+      enum: ["pending", "inProgress", "completed", "cancelled"],
+      default: "pending",
     },
   },
   {
@@ -45,10 +46,8 @@ const orderSchema = mongoose.Schema(
   }
 );
 
-// add plugin that converts mongoose to json
 orderSchema.plugin(toJSON);
 orderSchema.plugin(paginate);
 
-const Orders = mongoose.model("Order", orderSchema);
-
-module.exports = Orders;
+const Order = mongoose.model("Order", orderSchema);
+module.exports = Order;
