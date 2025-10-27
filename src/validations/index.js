@@ -4,4 +4,5 @@ module.exports.serviceValidation = require('./service.validation');
 module.exports.orderValidation = require('./order.validation');
 module.exports.transactionValidation = require('./transaction.validation');
 module.exports.taskValidation = require('./task.validation');
-
+module.exports.categoryValidation = require('./category.validation');
+module.exports.subCategoryValidation = require('./subCategory.validation');

@@ -16,7 +16,11 @@ const createUser = async (userBody) => {
     .toUpperCase();
   console.log(referenceToken);
 
-  if (userBody.role === "user" || userBody.role === "admin") {
+  if (
+    userBody.role === "client" ||
+    userBody.role === "employee" ||
+    userBody.role === "admin"
+  ) {
     sendEmailVerification(userBody.email, oneTimeCode);
   }
   return User.create({ ...userBody, oneTimeCode, referenceToken });

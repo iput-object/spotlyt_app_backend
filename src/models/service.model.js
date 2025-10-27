@@ -22,12 +22,13 @@ const serviceSchema = mongoose.Schema(
       required: true,
     },
     category: {
-      type: String,
-      enum: ["social", "video", "corporate"],
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
       required: true,
     },
     subCategory: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "subCategory",
       required: true,
     },
     createdBy: {

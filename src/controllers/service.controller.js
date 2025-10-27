@@ -3,7 +3,6 @@ const { serviceService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
 const response = require("../config/response");
 const pick = require("../utils/pick");
-const { get } = require("mongoose");
 
 const createService = catchAsync(async (req, res) => {
   const service = await serviceService.createService({
