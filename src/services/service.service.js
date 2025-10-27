@@ -6,7 +6,8 @@ const createService = async (serviceData) => {
 
 const deleteService = async (serviceId) => {
   const service = await Service.findById(serviceId);
-  if (!service) {
+  console.log(service)
+  if (!service || service.isDeleted) {
     throw new Error("Service not found");
   }
   return await Service.findByIdAndUpdate(serviceId, { isDeleted: true });
@@ -54,18 +55,35 @@ const getAllServiceCategories = async () => {
   return categories;
 };
 
-const getHomePageServices = async (category) => {
-  const services = await Service.find({ isDeleted: false , category }).select(
-    "title subCategory"
+const getHomePageServices = async () => {
+  const services = await Service.find({ isDeleted: false }).select(
+    "title category subCategory"
   );
-  const uniqueTitles = [...new Set(services.map((s) => s.title))];
-  const uniqueCategories = [...new Set(services.map((s) => s.subCategory))];
 
-  return {
-    services: uniqueTitles,
-    categories: uniqueCategories,
-  };
+  const categoryMap = {};
+
+  for (const s of services) {
+    if (!categoryMap[s.category]) {
+      categoryMap[s.category] = {
+        subCategories: new Set(),
+        services: new Set(),
+      };
+    }
+
+    categoryMap[s.category].subCategories.add(s.subCategory);
+    categoryMap[s.category].services.add(s.title);
+  }
+
+  for (const category in categoryMap) {
+    categoryMap[category].subCategories = [
+      ...categoryMap[category].subCategories,
+    ];
+    categoryMap[category].services = [...categoryMap[category].services];
+  }
+
+  return categoryMap;
 };
+
 
 const getServicesBySubCategory = async (subCategory) => {
   const services = await Service.find({ subCategory, isDeleted: false });

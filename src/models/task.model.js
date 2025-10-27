@@ -14,8 +14,10 @@ const taskSchema = mongoose.Schema(
       required: true,
     },
     screenshotUrl: {
-      type: String,
-      default: null,
+      type: {
+        url: String,
+        path: String,
+      },
     },
     status: {
       type: String,

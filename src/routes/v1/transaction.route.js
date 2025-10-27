@@ -13,6 +13,11 @@ router
     auth("common"),
     validate(transactionValidation.getTransactions),
     transactionController.queryTransactions
+  )
+  .post(
+    auth("admin"),
+    validate(transactionValidation.createTransaction),
+    transactionController.createTransaction
   );
 
 // Get specific transaction

@@ -34,7 +34,7 @@ const transactionSchema = mongoose.Schema(
     acceptedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
   },
   {

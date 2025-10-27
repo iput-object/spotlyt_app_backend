@@ -30,7 +30,7 @@ router
   );
 
 // Admin routes
-router.route("/").get(auth("admin"), validate(taskValidation.getTasks), taskController.queryTasks);
+router.route("/all").get(auth("admin"), validate(taskValidation.getTasks), taskController.queryTasks);
 router
   .route("/:taskId")
   .get(auth("common"), validate(taskValidation.getTask), taskController.getTaskById);

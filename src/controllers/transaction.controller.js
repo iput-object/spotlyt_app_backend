@@ -59,8 +59,25 @@ const updateTransactionStatus = catchAsync(async (req, res) => {
   );
 });
 
+const createTransaction = catchAsync(async (req, res) => {
+  const transactionData = req.body;
+  transactionData.performedBy = req.user.id;
+  const transaction = await transactionService.createTransaction(
+    transactionData
+  );
+  res.status(httpStatus.CREATED).json(
+    response({
+      message: "Transaction Created",
+      status: "Created",
+      statusCode: httpStatus.CREATED,
+      data: transaction,
+    })
+  );
+});
+
 module.exports = {
   queryTransactions,
   getTransactionById,
   updateTransactionStatus,
+  createTransaction,
 };

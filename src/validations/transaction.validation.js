@@ -14,6 +14,16 @@ const getTransactions = {
     }),
 };
 
+const createTransaction = {
+    body: Joi.object().keys({
+        transactionType: Joi.string().required().valid("order", "withdraw", "refund"),
+        amount: Joi.number().required().positive(),
+        status: Joi.string().required().valid("pending", "completed", "failed"),
+        gateway: Joi.string().required(),
+        transactionId: Joi.string().required(),
+    }),
+};
+
 const getTransaction = {
     params: Joi.object().keys({
         transactionId: Joi.string().required().custom(objectId),
@@ -33,4 +43,5 @@ module.exports = {
     getTransactions,
     getTransaction,
     updateTransactionStatus,
+    createTransaction,
 };

@@ -22,13 +22,13 @@ const createService = catchAsync(async (req, res) => {
 
 const deleteService = catchAsync(async (req, res) => {
   const serviceId = req.params.serviceId;
-  const service = await serviceService.deleteService(serviceId);
+  await serviceService.deleteService(serviceId);
   res.status(httpStatus.CREATED).json(
     response({
-      message: "Service Created",
+      message: "Service Deleted",
       status: "OK",
       statusCode: httpStatus.CREATED,
-      data: service,
+      data: {},
     })
   );
 });
@@ -85,9 +85,7 @@ const getAllServiceCategories = catchAsync(async (req, res) => {
 });
 
 const getHomePageServices = catchAsync(async (req, res) => {
-  const category = pick(req.query, ["category"]).category;
-  console.log({ category });
-  const services = await serviceService.getHomePageServices(category);
+  const services = await serviceService.getHomePageServices();
   res.status(httpStatus.CREATED).json(
     response({
       message: "Home Page Services Fetched",
