@@ -1,12 +1,26 @@
-const { Service } = require("../models");
+const { Service, Category, SubCategory } = require("../models");
 
 const createService = async (serviceData) => {
+  const subCategoryExists = await SubCategory.findOne({
+    _id: serviceData.subCategory,
+    isDeleted: false,
+  });
+
+  const categoryExists = await Category.findOne({
+    _id: subCategoryExists.category,
+    isDeleted: false,
+  });
+
+  if (!subCategoryExists || !categoryExists) {
+    throw new Error(
+      "SubCategory not found or does not belong to the specified category"
+    );
+  }
   return await Service.create(serviceData);
 };
 
 const deleteService = async (serviceId) => {
   const service = await Service.findById(serviceId);
-  console.log(service)
   if (!service || service.isDeleted) {
     throw new Error("Service not found");
   }
@@ -15,15 +29,43 @@ const deleteService = async (serviceId) => {
 
 const updateService = async (serviceId, updateData) => {
   const service = await Service.findById(serviceId);
-  if (!service) {
+  if (!service || service.isDeleted) {
     throw new Error("Service not found");
   }
+
+  // If updating category or subCategory, validate them
+  if (updateData.category || updateData.subCategory) {
+    const categoryId = updateData.category || service.category;
+    const subCategoryId = updateData.subCategory || service.subCategory;
+
+    // Validate category exists
+    const categoryExists = await Category.findOne({
+      _id: categoryId,
+      isDeleted: false,
+    });
+    if (!categoryExists) {
+      throw new Error("Category not found");
+    }
+
+    // Validate subCategory exists and belongs to the category
+    const subCategoryExists = await SubCategory.findOne({
+      _id: subCategoryId,
+      category: categoryId,
+      isDeleted: false,
+    });
+    if (!subCategoryExists) {
+      throw new Error(
+        "SubCategory not found or does not belong to the specified category"
+      );
+    }
+  }
+
   Object.assign(service, updateData);
   return await service.save();
 };
 
 const getService = async (serviceId) => {
-  const service = await Service.findById(serviceId);
+  const service = await Service.findOne({ _id: serviceId, isDeleted: false });
   if (!service) {
     throw new Error("Service not found");
   }
@@ -31,15 +73,12 @@ const getService = async (serviceId) => {
 };
 
 const queryServices = async (filter, options) => {
-  const query = {};
+  const query = { isDeleted: false };
 
   // Loop through each filter field and add conditions if they exist
   for (const key of Object.keys(filter)) {
-    if (
-      (key === "fullName" || key === "email" || key === "username") &&
-      filter[key] !== ""
-    ) {
-      query[key] = { $regex: filter[key], $options: "i" }; // Case-insensitive regex search for name
+    if ((key === "title" || key === "description") && filter[key] !== "") {
+      query[key] = { $regex: filter[key], $options: "i" }; // Case-insensitive regex search
     } else if (filter[key] !== "") {
       query[key] = filter[key];
     }
@@ -51,42 +90,101 @@ const queryServices = async (filter, options) => {
 };
 
 const getAllServiceCategories = async () => {
-  const categories = await Service.distinct("subCategory");
-  return categories;
+  const categories = await Category.find({ isDeleted: false })
+    .select("name")
+    .lean();
+
+  const result = [];
+
+  for (const category of categories) {
+    const subCategories = await SubCategory.find({
+      category: category._id,
+      isDeleted: false,
+    })
+      .select("name")
+      .lean();
+
+    const serviceCount = await Service.countDocuments({
+      category: category._id,
+      isDeleted: false,
+    });
+
+    result.push({
+      _id: category._id,
+      name: category.name,
+      subCategories: subCategories,
+      serviceCount: serviceCount,
+    });
+  }
+
+  return result;
 };
 
-const getHomePageServices = async () => {
-  const services = await Service.find({ isDeleted: false }).select(
-    "title category subCategory"
-  );
+const getHomePageServices = async (options) => {
+  const {
+    results: categories,
+    totalPages,
+    totalResults,
+    page,
+    limit,
+  } = await Category.paginate({ isDeleted: false }, options);
 
-  const categoryMap = {};
+  const homePageServices = [];
 
-  for (const s of services) {
-    if (!categoryMap[s.category]) {
-      categoryMap[s.category] = {
-        subCategories: new Set(),
-        services: new Set(),
-      };
+  for (const category of categories) {
+    const subCategories = await SubCategory.find({
+      category: category._id,
+      isDeleted: false,
+    });
+
+    const subCategoryList = [];
+    for (const subCategory of subCategories) {
+      const services = await Service.find({
+        subCategory: subCategory._id,
+        isDeleted: false,
+      });
+
+      subCategoryList.push({
+        ...subCategory.toObject(),
+        services,
+      });
     }
 
-    categoryMap[s.category].subCategories.add(s.subCategory);
-    categoryMap[s.category].services.add(s.title);
+    homePageServices.push({
+      ...category.toObject(),
+      subCategories: subCategoryList,
+    });
   }
 
-  for (const category in categoryMap) {
-    categoryMap[category].subCategories = [
-      ...categoryMap[category].subCategories,
-    ];
-    categoryMap[category].services = [...categoryMap[category].services];
-  }
-
-  return categoryMap;
+  return {
+    results: homePageServices,
+    ...{ page, limit, totalPages, totalResults },
+  };
 };
 
+const getServicesBySubCategory = async (subCategoryId) => {
+  const services = await Service.find({
+    subCategory: subCategoryId,
+    isDeleted: false,
+  })
+    .populate("category", "name")
+    .populate("subCategory", "name category")
+    .populate("createdBy", "name email")
+    .lean();
 
-const getServicesBySubCategory = async (subCategory) => {
-  const services = await Service.find({ subCategory, isDeleted: false });
+  return services;
+};
+
+const getServicesByCategory = async (categoryId) => {
+  const services = await Service.find({
+    category: categoryId,
+    isDeleted: false,
+  })
+    .populate("category", "name")
+    .populate("subCategory", "name category")
+    .populate("createdBy", "name email")
+    .lean();
+
   return services;
 };
 
@@ -99,4 +197,5 @@ module.exports = {
   getAllServiceCategories,
   getHomePageServices,
   getServicesBySubCategory,
+  getServicesByCategory,
 };

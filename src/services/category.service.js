@@ -1,6 +1,12 @@
+const httpStatus = require("http-status");
 const { Category } = require("../models");
+const ApiError = require("../utils/ApiError");
 
 const createCategory = async (categoryData) => {
+  const category = await Category.findOne({name:categoryData.name})
+  if (category){
+    throw new ApiError(httpStatus.CONFLICT , "Category Already Exists!")
+  }
   return await Category.create(categoryData);
 };
 
@@ -17,6 +23,12 @@ const updateCategory = async (categoryId, updateData) => {
   if (!category || category.isDeleted) {
     throw new Error("Category not found");
   }
+
+  const categoryName = await Category.findOne({name:updateData.name})
+  if (categoryName){
+    throw new ApiError(httpStatus.CONFLICT , "Category Name Already Exists!")
+  }
+
   Object.assign(category, updateData);
   return await category.save();
 };
@@ -45,7 +57,7 @@ const queryCategories = async (filter, options) => {
 };
 
 const getAllCategories = async () => {
-  const categories = await Category.find({ isDeleted: false }).select("name");
+  const categories = await Category.find({ isDeleted: false });
   return categories;
 };
 

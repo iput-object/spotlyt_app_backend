@@ -34,7 +34,10 @@ const deleteSubCategory = catchAsync(async (req, res) => {
 
 const updateSubCategory = catchAsync(async (req, res) => {
   const subCategoryId = req.params.subCategoryId;
-  const subCategory = await subCategoryService.updateSubCategory(subCategoryId, req.body);
+  const subCategory = await subCategoryService.updateSubCategory(
+    subCategoryId,
+    req.body
+  );
   res.status(httpStatus.CREATED).json(
     response({
       message: "SubCategory Updated",
@@ -61,7 +64,10 @@ const getSubCategory = catchAsync(async (req, res) => {
 const getSubCategories = catchAsync(async (req, res) => {
   const filter = pick(req.query, ["name", "category"]);
   const options = pick(req.query, ["sortBy", "limit", "page"]);
-  const subCategories = await subCategoryService.querySubCategories(filter, options);
+  const subCategories = await subCategoryService.querySubCategories(
+    filter,
+    options
+  );
   res.status(httpStatus.CREATED).json(
     response({
       message: "SubCategories Fetched",
@@ -77,12 +83,26 @@ const getSubCategoriesByCategory = catchAsync(async (req, res) => {
   if (!categoryId) {
     throw new Error("Category parameter is required");
   }
-  const subCategories = await subCategoryService.getSubCategoriesByCategory(categoryId);
+  const subCategories = await subCategoryService.getSubCategoriesByCategory(
+    categoryId
+  );
   res.status(httpStatus.CREATED).json(
     response({
       message: "SubCategories By Category Fetched",
       status: "OK",
       statusCode: httpStatus.CREATED,
+      data: subCategories,
+    })
+  );
+});
+
+const getAllSubCategories = catchAsync(async (req, res) => {
+  const subCategories = await subCategoryService.getAllSubCategories();
+  res.status(httpStatus.OK).json(
+    response({
+      message: "SubCategories Fetched",
+      status: "OK",
+      statusCode: httpStatus.OK,
       data: subCategories,
     })
   );
@@ -95,4 +115,5 @@ module.exports = {
   getSubCategory,
   getSubCategories,
   getSubCategoriesByCategory,
+  getAllSubCategories
 };

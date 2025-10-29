@@ -6,7 +6,7 @@ const createOrder = {
         service: Joi.string().required().custom(objectId),
         quantity: Joi.number().integer().min(1).required(),
         link: Joi.string().uri().required(),
-        prefs: Joi.string().optional().allow(""),
+        note: Joi.string().optional().allow(""),
     }),
 };
 
@@ -34,7 +34,7 @@ const updateOrder = {
         .keys({
             status: Joi.string().valid("pending", "inProgress", "completed", "cancelled"),
             link: Joi.string().uri(),
-            prefs: Joi.string().allow(""),
+            note: Joi.string().allow(""),
         })
         .min(1),
 };

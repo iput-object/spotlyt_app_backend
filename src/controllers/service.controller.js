@@ -58,14 +58,14 @@ const getService = catchAsync(async (req, res) => {
 });
 
 const getServices = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ["subCategory", "createdBy"]);
+  const filter = pick(req.query, ["category", "subCategory", "createdBy", "title", "description"]);
   const options = pick(req.query, ["sortBy", "limit", "page"]);
   const services = await serviceService.queryServices(filter, options);
-  res.status(httpStatus.CREATED).json(
+  res.status(httpStatus.OK).json(
     response({
       message: "Services Fetched",
       status: "OK",
-      statusCode: httpStatus.CREATED,
+      statusCode: httpStatus.OK,
       data: services,
     })
   );
@@ -84,7 +84,8 @@ const getAllServiceCategories = catchAsync(async (req, res) => {
 });
 
 const getHomePageServices = catchAsync(async (req, res) => {
-  const services = await serviceService.getHomePageServices();
+  const options = pick(req.query, ["sortBy", "limit", "page"]);
+  const services = await serviceService.getHomePageServices(options);
   res.status(httpStatus.CREATED).json(
     response({
       message: "Home Page Services Fetched",
@@ -101,15 +102,32 @@ const getServicesBySubCategory = catchAsync(async (req, res) => {
     throw new Error("SubCategory parameter is required");
   }
   const services = await serviceService.getServicesBySubCategory(subCategory);
-  res.status(httpStatus.CREATED).json(
+  res.status(httpStatus.OK).json(
     response({
-      message: "Services By Category Fetched",
+      message: "Services By SubCategory Fetched",
       status: "OK",
-      statusCode: httpStatus.CREATED,
+      statusCode: httpStatus.OK,
       data: services,
     })
   );
 });
+
+const getServicesByCategory = catchAsync(async (req, res) => {
+  const category = req.params.category;
+  if (!category) {
+    throw new Error("Category parameter is required");
+  }
+  const services = await serviceService.getServicesByCategory(category);
+  res.status(httpStatus.OK).json(
+    response({
+      message: "Services By Category Fetched",
+      status: "OK",
+      statusCode: httpStatus.OK,
+      data: services,
+    })
+  );
+});
+
 module.exports = {
   createService,
   deleteService,
@@ -119,4 +137,5 @@ module.exports = {
   getAllServiceCategories,
   getHomePageServices,
   getServicesBySubCategory,
+  getServicesByCategory,
 };

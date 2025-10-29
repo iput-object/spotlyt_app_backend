@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { objectId } = require("./custom.validation");
 
 const createService = {
   body: Joi.object().keys({
@@ -6,8 +7,9 @@ const createService = {
     description: Joi.string().optional(),
     servicePrice: Joi.number().required(),
     serviceCommission: Joi.number().required(),
-    category: Joi.string().required().valid("social", "video", "corporate"),
-    subCategory: Joi.string().trim().required(),
+    subCategory: Joi.string().custom(objectId).required(),
+    category: Joi.string().custom(objectId).required(),
+
   }),
 };
 
@@ -17,8 +19,8 @@ const updateService = {
     description: Joi.string().optional(),
     servicePrice: Joi.number().optional(),
     serviceCommission: Joi.number().optional(),
-    category: Joi.string().optional().valid("social", "video", "corporate"),
-    subCategory: Joi.string().trim().optional(),
+    subCategory: Joi.string().custom(objectId).optional(),
+    category: Joi.string().custom(objectId).optional(),
     isDeleted: Joi.boolean().optional(),
   }),
 };

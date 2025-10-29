@@ -16,6 +16,10 @@ router
   .get(auth("common"), subCategoryController.getSubCategories);
 
 router
+  .route("/all")
+  .get(auth("common"), subCategoryController.getAllSubCategories);
+
+router
   .route("/category/:categoryId")
   .get(auth("common"), subCategoryController.getSubCategoriesByCategory);
 

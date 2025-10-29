@@ -14,7 +14,7 @@ const router = express.Router();
 router
   .route("/homepage")
   .get(auth("common"), serviceController.getHomePageServices);
-  
+
 router
   .route("/")
   .post(
@@ -37,5 +37,10 @@ router.route("/").get(auth("common"), serviceController.getServices);
 router
   .route("/categories/all")
   .get(auth("common"), serviceController.getAllServiceCategories);
-router.route("/homepage/:subCategory").get(auth("common"), serviceController.getServicesBySubCategory);
+router
+  .route("/category/:category")
+  .get(auth("common"), serviceController.getServicesByCategory);
+router
+  .route("/homepage/:subCategory")
+  .get(auth("common"), serviceController.getServicesBySubCategory);
 module.exports = router;

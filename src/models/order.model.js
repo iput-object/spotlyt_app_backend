@@ -17,7 +17,7 @@ const orderSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    prefs: {
+    note: {
       type: String,
       required: false,
     },

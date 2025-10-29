@@ -10,23 +10,19 @@ const {
 } = require("../services");
 
 const register = catchAsync(async (req, res) => {
-  const { email, fullName, firstName, lastName, ...rest } = req.body;
+  const { email, fullName, ...rest } = req.body;
   const isUser = await userService.getUserByEmail(email);
 
   if (isUser) {
     if (isUser.isDeleted) {
       await userService.isUpdateUser(isUser.id, {
-        fullName: fullName || `${firstName} ${lastName}`,
-        firstName,
-        lastName,
+        fullName,
         email,
         ...rest
       });
     } else if (!isUser.isEmailVerified) {
       await userService.isUpdateUser(isUser.id, {
-        fullName: fullName || `${firstName} ${lastName}`,
-        firstName,
-        lastName,
+        fullName,
         email,
         ...rest
       });
@@ -35,9 +31,7 @@ const register = catchAsync(async (req, res) => {
     }
   } else {
     await userService.createUser({
-      fullName: fullName || `${firstName} ${lastName}`,
-      firstName,
-      lastName,
+      fullName,
       email,
       ...rest
     });

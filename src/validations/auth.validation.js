@@ -6,7 +6,7 @@ const register = {
     fullName: Joi.string(),
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
-    role: Joi.string().required().valid("client", "employee", "admin"),
+    role: Joi.string().required().valid("client", "employee"), // Removed "admin" to prevent admin registration.
     referredBy: Joi.string().optional(),
   }),
 };
