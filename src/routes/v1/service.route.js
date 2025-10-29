@@ -16,6 +16,10 @@ router
   .get(auth("common"), serviceController.getHomePageServices);
 
 router
+  .route("/homepage/category/:category")
+  .get(auth("common"), serviceController.getHomeServicesByCategory);
+
+router
   .route("/")
   .post(
     auth("admin"),
@@ -36,11 +40,11 @@ router.route("/:serviceId").get(auth("common"), serviceController.getService);
 router.route("/").get(auth("common"), serviceController.getServices);
 router
   .route("/categories/all")
-  .get(auth("common"), serviceController.getAllServiceCategories);
+  .get(auth("admin"), serviceController.getAllServiceCategories);
 router
   .route("/category/:category")
-  .get(auth("common"), serviceController.getServicesByCategory);
+  .get(auth("admin"), serviceController.getServicesByCategory);
 router
   .route("/homepage/:subCategory")
-  .get(auth("common"), serviceController.getServicesBySubCategory);
+  .get(auth("admin"), serviceController.getServicesBySubCategory);
 module.exports = router;

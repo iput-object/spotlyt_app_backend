@@ -90,8 +90,7 @@ const queryServices = async (filter, options) => {
 };
 
 const getAllServiceCategories = async () => {
-  const categories = await Category.find({ isDeleted: false })
-    .select("name")
+  const categories = await Category.find({ isDeleted: false }).select("name");
 
   const result = [];
 
@@ -99,8 +98,7 @@ const getAllServiceCategories = async () => {
     const subCategories = await SubCategory.find({
       category: category._id,
       isDeleted: false,
-    })
-      .select("name")
+    }).select("name");
 
     const serviceCount = await Service.countDocuments({
       category: category._id,
@@ -167,7 +165,7 @@ const getServicesBySubCategory = async (subCategoryId) => {
   })
     .populate("category", "name")
     .populate("subCategory", "name category")
-    .populate("createdBy", "fullName email")
+    .populate("createdBy", "fullName email");
 
   return services;
 };
@@ -185,6 +183,25 @@ const getServicesByCategory = async (categoryId) => {
   return services;
 };
 
+const getHomeServicesByCategory = async (category) => {
+  const categoryParent = await Category.findOne({ isDeleted: false, _id: category });
+  const subCategories = await SubCategory.find({ isDeleted: false, category });
+  const subCategoriesArr = [];
+  for (const subCategory of subCategories) {
+    const services = await Service.find({
+      subCategory: subCategory._id,
+      isDeleted: false,
+    });
+
+    subCategoriesArr.push({
+      ...subCategory.toObject(),
+      services,
+    });
+  }
+
+  return { ...categoryParent.toObject(), subCategory: subCategoriesArr };
+};
+
 module.exports = {
   createService,
   deleteService,
@@ -195,4 +212,5 @@ module.exports = {
   getHomePageServices,
   getServicesBySubCategory,
   getServicesByCategory,
+  getHomeServicesByCategory,
 };
