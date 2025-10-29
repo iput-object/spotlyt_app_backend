@@ -92,7 +92,6 @@ const queryServices = async (filter, options) => {
 const getAllServiceCategories = async () => {
   const categories = await Category.find({ isDeleted: false })
     .select("name")
-    .lean();
 
   const result = [];
 
@@ -102,7 +101,6 @@ const getAllServiceCategories = async () => {
       isDeleted: false,
     })
       .select("name")
-      .lean();
 
     const serviceCount = await Service.countDocuments({
       category: category._id,
@@ -169,8 +167,7 @@ const getServicesBySubCategory = async (subCategoryId) => {
   })
     .populate("category", "name")
     .populate("subCategory", "name category")
-    .populate("createdBy", "name email")
-    .lean();
+    .populate("createdBy", "fullName email")
 
   return services;
 };
@@ -182,7 +179,7 @@ const getServicesByCategory = async (categoryId) => {
   })
     .populate("category", "name")
     .populate("subCategory", "name category")
-    .populate("createdBy", "name email")
+    .populate("createdBy", "fullName email")
     .lean();
 
   return services;
