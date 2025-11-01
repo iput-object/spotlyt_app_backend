@@ -23,6 +23,8 @@ const envVarsSchema = Joi.object()
     SMTP_USERNAME: Joi.string().description('username for email server'),
     SMTP_PASSWORD: Joi.string().description('password for email server'),
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
+    STRIPE_SECRET_KEY:Joi.string().description('The Stripe Secret key is missing!'),
+    BACKEND_IP:Joi.string().required().description('The Backend ip is Must Needed.')
   })
   .unknown();
 
@@ -38,7 +40,6 @@ module.exports = {
   mongoose: {
     url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
     options: {
-      // useCreateIndex: true,
       useNewUrlParser: true,
       useUnifiedTopology: true,
     },
@@ -61,4 +62,8 @@ module.exports = {
     },
     from: envVars.EMAIL_FROM,
   },
+  stripe:{
+    private_key: envVars.STRIPE_SECRET_KEY
+  },
+  base_url: `http://${envVars.BACKEND_IP}/${envVars.PORT}`
 };

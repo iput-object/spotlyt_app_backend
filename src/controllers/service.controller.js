@@ -128,22 +128,6 @@ const getServicesByCategory = catchAsync(async (req, res) => {
   );
 });
 
-const getHomeServicesByCategory = catchAsync(async (req, res) => {
-  const category = req.params.category;
-  if (!category) {
-    throw new Error("Category parameter is required");
-  }
-  const services = await serviceService.getHomeServicesByCategory(category);
-  res.status(httpStatus.OK).json(
-    response({
-      message: "Services By Category Fetched",
-      status: "OK",
-      statusCode: httpStatus.OK,
-      data: services,
-    })
-  );
-});
-
 module.exports = {
   createService,
   deleteService,
@@ -154,5 +138,4 @@ module.exports = {
   getHomePageServices,
   getServicesBySubCategory,
   getServicesByCategory,
-  getHomeServicesByCategory
 };

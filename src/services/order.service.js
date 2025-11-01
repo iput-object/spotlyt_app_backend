@@ -1,21 +1,12 @@
 const { Task, Transaction, Order, Service } = require("../models");
+const { createSub } = require("../utils/stripe");
 const transactionService = require("./transaction.service");
 
-/**
- * Check if any task has been deployed (approved) for an order
- * @param {ObjectId} orderId
- * @returns {Promise<boolean>}
- */
 const isTaskDeployed = async (orderId) => {
   const task = await Task.findOne({ order: orderId, status: "approved" });
   return !!task;
 };
 
-/**
- * Create a new order with payment transaction
- * @param {Object} orderData
- * @returns {Promise<Order>}
- */
 const createOrder = async (orderData) => {
   // Validate service exists and get pricing
   const service = await Service.findById(orderData.service);
@@ -27,13 +18,21 @@ const createOrder = async (orderData) => {
   const totalAmount = service.servicePrice * orderData.quantity;
   orderData.amount = totalAmount;
 
+  // console.log({ orderData, service });
+
+  const stripeRes = await createSub({
+    title: service.title,
+    quantity: orderData.quantity,
+    price: service.servicePrice,
+  });
+  console.log(stripeRes.url);
   // Create payment transaction (mocked for now with stripe)
   const payment = await transactionService.createTransaction({
     transactionType: "order",
-    status: "completed", // In production, this would be "pending" until payment gateway confirms
+    status: stripeRes.payment_status, // In production, this would be "pending" until payment gateway confirms
     amount: totalAmount,
     gateway: "stripe",
-    transactionId: `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    transactionId: stripeRes.id,
     performedBy: orderData.orderedBy,
     acceptedBy: orderData.orderedBy, // For orders, user pays themselves
   });
@@ -46,16 +45,9 @@ const createOrder = async (orderData) => {
   orderData.status = "pending";
 
   const order = await Order.create(orderData);
-  return order;
+  return { ...order.toObject(), payment_url: stripeRes.url };
 };
 
-/**
- * Query orders with pagination
- * @param {ObjectId} userId
- * @param {Object} filter
- * @param {Object} options
- * @returns {Promise<QueryResult>}
- */
 const queryOrders = async (userId, filter, options) => {
   const query = { orderedBy: userId };
 
@@ -71,12 +63,6 @@ const queryOrders = async (userId, filter, options) => {
   return orders;
 };
 
-/**
- * Get all orders (admin view)
- * @param {Object} filter
- * @param {Object} options
- * @returns {Promise<QueryResult>}
- */
 const queryAllOrders = async (filter, options) => {
   const query = {};
 
@@ -92,11 +78,6 @@ const queryAllOrders = async (filter, options) => {
   return orders;
 };
 
-/**
- * Get order by ID with populated fields
- * @param {ObjectId} orderId
- * @returns {Promise<Order>}
- */
 const getOrderById = async (orderId) => {
   const order = await Order.findById(orderId)
     .populate("service")
@@ -109,12 +90,6 @@ const getOrderById = async (orderId) => {
   return order;
 };
 
-/**
- * Revoke/cancel an order and issue refund
- * @param {ObjectId} orderId
- * @param {ObjectId} userId
- * @returns {Promise<Order>}
- */
 const revokeOrder = async (orderId, userId) => {
   const order = await Order.findById(orderId);
   if (!order) {
@@ -160,11 +135,6 @@ const revokeOrder = async (orderId, userId) => {
   return order;
 };
 
-/**
- * Get order statistics for a user
- * @param {ObjectId} userId
- * @returns {Promise<Object>}
- */
 const getUserOrderStats = async (userId) => {
   const stats = await Order.aggregate([
     { $match: { orderedBy: userId } },
@@ -180,12 +150,6 @@ const getUserOrderStats = async (userId) => {
   return stats;
 };
 
-/**
- * Update order (admin only)
- * @param {ObjectId} orderId
- * @param {Object} updateData
- * @returns {Promise<Order>}
- */
 const updateOrder = async (orderId, updateData) => {
   const order = await Order.findById(orderId);
   if (!order) {
