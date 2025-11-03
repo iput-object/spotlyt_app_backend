@@ -47,4 +47,5 @@ router
 router
   .route("/homepage/:subCategory")
   .get(auth("admin"), serviceController.getServicesBySubCategory);
+  
 module.exports = router;

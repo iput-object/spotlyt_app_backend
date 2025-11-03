@@ -58,7 +58,13 @@ const getService = catchAsync(async (req, res) => {
 });
 
 const getServices = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ["category", "subCategory", "createdBy", "title", "description"]);
+  const filter = pick(req.query, [
+    "category",
+    "subCategory",
+    "createdBy",
+    "title",
+    "description",
+  ]);
   const options = pick(req.query, ["sortBy", "limit", "page"]);
   const services = await serviceService.queryServices(filter, options);
   res.status(httpStatus.OK).json(
@@ -128,6 +134,21 @@ const getServicesByCategory = catchAsync(async (req, res) => {
   );
 });
 
+const getHomeServicesByCategory = catchAsync(async (req, res) => {
+  const category = req.params.category;
+  if (!category) {
+    throw new Error("Category parameter is required");
+  }
+  const services = await serviceService.getHomeServicesByCategory(category);
+  res.status(httpStatus.OK).json(
+    response({
+      message: "Services By Category (Home)",
+      status: "OK",
+      statusCode: httpStatus.OK,
+      data: services,
+    })
+  );
+});
 module.exports = {
   createService,
   deleteService,
@@ -138,4 +159,5 @@ module.exports = {
   getHomePageServices,
   getServicesBySubCategory,
   getServicesByCategory,
+  getHomeServicesByCategory,
 };

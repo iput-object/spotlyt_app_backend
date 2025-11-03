@@ -1,6 +1,7 @@
-const { query } = require("express");
 const { Task, User, Order, Service } = require("../models");
 const transactionService = require("./transaction.service");
+const ApiError = require("../utils/ApiError");
+const httpStatus = require("http-status");
 
 /**
  * Check if user can claim a task for an order
@@ -15,34 +16,46 @@ const canClaimTask = async (orderId, userId) => {
   ]);
 
   if (!user) {
-    throw new Error("User not verified or doesn't exist");
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "User not verified or doesn't exist"
+    );
   }
 
   if (!order) {
-    throw new Error("Order not found");
+    throw new ApiError(httpStatus.FORBIDDEN, "Order not found");
   }
 
   // Prevent order owner from claiming their own tasks
   if (order.orderedBy._id.toString() === userId.toString()) {
-    throw new Error("Cannot claim your own order");
+    throw new ApiError(httpStatus.FORBIDDEN, "Cannot claim your own order");
   }
 
   // Check if order is still open
   if (order.status === "completed" || order.status === "cancelled") {
-    throw new Error("Order is closed");
+    throw new ApiError(httpStatus.FORBIDDEN, "Order is closed");
   }
 
-  const alreadyClaimed = await Task.findOne({
+  const taskClaimed = await Task.findOne({
     order: orderId,
     claimedBy: userId,
   });
-  if (alreadyClaimed) {
-    throw new Error("User already claimed this task");
+
+  if (
+    taskClaimed.status !== "approved" ||
+    taskClaimed.status !== "submitted" ||
+    taskClaimed.status !== "reserved"
+  ) {
+    throw new ApiApiError(
+      httpStatus.FORBIDDEN,
+      httpStatus.FORBIDDEN,
+      "Your already Occupied the Task!"
+    );
   }
 
   const claimedCount = await Task.countDocuments({ order: orderId });
   if (claimedCount >= order.quantity) {
-    throw new Error("All tasks have been claimed");
+    throw new ApiError(httpStatus.FORBIDDEN, "All tasks have been claimed");
   }
 
   return true;
@@ -80,9 +93,16 @@ const claimTask = async (orderId, userId) => {
 const submitTask = async (taskId, userId, screenshotUrl) => {
   const task = await Task.findOne({ _id: taskId, claimedBy: userId });
 
-  if (!task) throw new Error("Task not found or not owned by user");
+  if (!task)
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "Task not found or not owned by user"
+    );
   if (task.status !== "reserved")
-    throw new Error("Task already submitted or closed");
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "Task already submitted or closed"
+    );
 
   task.status = "submitted";
   task.screenshotUrl = screenshotUrl;
@@ -104,8 +124,9 @@ const approveTask = async (taskId, adminId) => {
     populate: { path: "service" },
   });
 
-  if (!task) throw new Error("Task not found");
-  if (task.status !== "submitted") throw new Error("Task not submitted yet");
+  if (!task) throw new ApiError(httpStatus.FORBIDDEN, "Task not found");
+  if (task.status !== "submitted")
+    throw new ApiError(httpStatus.FORBIDDEN, "Task not submitted yet");
 
   const service = task.order.service;
   const commission = service.serviceCommission;
@@ -145,9 +166,12 @@ const approveTask = async (taskId, adminId) => {
  */
 const rejectTask = async (taskId, adminId, reason) => {
   const task = await Task.findById(taskId);
-  if (!task) throw new Error("Task not found");
+  if (!task) throw new ApiError(httpStatus.FORBIDDEN, "Task not found");
   if (task.status !== "submitted")
-    throw new Error("Only submitted tasks can be rejected");
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      "Only submitted tasks can be rejected"
+    );
 
   task.status = "rejected";
   task.approvedBy = adminId;
@@ -188,10 +212,10 @@ const checkAndCloseOrder = async (orderId) => {
  */
 const closeTask = async (taskId, adminId) => {
   const task = await Task.findById(taskId);
-  if (!task) throw new Error("Task not found");
+  if (!task) throw new ApiError(httpStatus.FORBIDDEN, "Task not found");
 
   if (task.status === "approved" || task.status === "expired") {
-    throw new Error("Task already closed");
+    throw new ApiError(httpStatus.FORBIDDEN, "Task already closed");
   }
 
   task.status = "expired";
@@ -293,7 +317,7 @@ const getTaskById = async (taskId) => {
     })
     .populate("approvedBy", "fullName email");
 
-  if (!task) throw new Error("Task not found");
+  if (!task) throw new ApiError(httpStatus.FORBIDDEN, "Task not found");
   return task;
 };
 
@@ -336,5 +360,5 @@ module.exports = {
   autoCloseOrders,
   queryTasks,
   getTaskById,
-  queryAvailableTasks
+  queryAvailableTasks,
 };
