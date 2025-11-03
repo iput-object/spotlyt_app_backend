@@ -42,9 +42,9 @@ const canClaimTask = async (orderId, userId) => {
   });
 
   if (
-    taskClaimed.status !== "approved" ||
-    taskClaimed.status !== "submitted" ||
-    taskClaimed.status !== "reserved"
+    taskClaimed.status === "approved" ||
+    taskClaimed.status === "submitted" ||
+    taskClaimed.status === "reserved"
   ) {
     throw new ApiApiError(
       httpStatus.FORBIDDEN,
