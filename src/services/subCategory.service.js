@@ -13,7 +13,7 @@ const createSubCategory = async (subCategoryData) => {
 const deleteSubCategory = async (subCategoryId) => {
   const subCategory = await SubCategory.findById(subCategoryId);
   if (!subCategory || subCategory.isDeleted) {
-    throw new Error("SubCategory not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "SubCategory not found");
   }
   return await SubCategory.findByIdAndUpdate(subCategoryId, {
     isDeleted: true,
@@ -23,7 +23,7 @@ const deleteSubCategory = async (subCategoryId) => {
 const updateSubCategory = async (subCategoryId, updateData) => {
   const subCategory = await SubCategory.findById(subCategoryId);
   if (!subCategory || subCategory.isDeleted) {
-    throw new Error("SubCategory not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "SubCategory not found");
   }
 
   const subCategoryName = await SubCategory.findOne({
@@ -42,7 +42,7 @@ const getSubCategory = async (subCategoryId) => {
     { path: "createdBy", select: "fullName" },
   ]);
   if (!subCategory || subCategory.isDeleted) {
-    throw new Error("SubCategory not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "SubCategory not found");
   }
   return subCategory;
 };

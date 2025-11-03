@@ -3,9 +3,9 @@ const { Category } = require("../models");
 const ApiError = require("../utils/ApiError");
 
 const createCategory = async (categoryData) => {
-  const category = await Category.findOne({name:categoryData.name})
-  if (category){
-    throw new ApiError(httpStatus.CONFLICT , "Category Already Exists!")
+  const category = await Category.findOne({ name: categoryData.name });
+  if (category) {
+    throw new ApiError(httpStatus.CONFLICT, "Category Already Exists!");
   }
   return await Category.create(categoryData);
 };
@@ -13,7 +13,7 @@ const createCategory = async (categoryData) => {
 const deleteCategory = async (categoryId) => {
   const category = await Category.findById(categoryId);
   if (!category || category.isDeleted) {
-    throw new Error("Category not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Category not found");
   }
   return await Category.findByIdAndUpdate(categoryId, { isDeleted: true });
 };
@@ -21,12 +21,12 @@ const deleteCategory = async (categoryId) => {
 const updateCategory = async (categoryId, updateData) => {
   const category = await Category.findById(categoryId);
   if (!category || category.isDeleted) {
-    throw new Error("Category not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Category not found");
   }
 
-  const categoryName = await Category.findOne({name:updateData.name})
-  if (categoryName){
-    throw new ApiError(httpStatus.CONFLICT , "Category Name Already Exists!")
+  const categoryName = await Category.findOne({ name: updateData.name });
+  if (categoryName) {
+    throw new ApiError(httpStatus.CONFLICT, "Category Name Already Exists!");
   }
 
   Object.assign(category, updateData);
@@ -36,7 +36,7 @@ const updateCategory = async (categoryId, updateData) => {
 const getCategory = async (categoryId) => {
   const category = await Category.findById(categoryId);
   if (!category || category.isDeleted) {
-    throw new Error("Category not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Category not found");
   }
   return category;
 };

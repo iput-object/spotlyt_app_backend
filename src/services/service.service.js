@@ -1,4 +1,5 @@
 const { Service, Category, SubCategory } = require("../models");
+const ApiError = require("../utils/ApiError");
 
 const createService = async (serviceData) => {
   const subCategoryExists = await SubCategory.findOne({
@@ -12,7 +13,8 @@ const createService = async (serviceData) => {
   });
 
   if (!subCategoryExists || !categoryExists) {
-    throw new Error(
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
       "SubCategory not found or does not belong to the specified category"
     );
   }
@@ -22,7 +24,7 @@ const createService = async (serviceData) => {
 const deleteService = async (serviceId) => {
   const service = await Service.findById(serviceId);
   if (!service || service.isDeleted) {
-    throw new Error("Service not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Service not found");
   }
   return await Service.findByIdAndUpdate(serviceId, { isDeleted: true });
 };
@@ -30,7 +32,7 @@ const deleteService = async (serviceId) => {
 const updateService = async (serviceId, updateData) => {
   const service = await Service.findById(serviceId);
   if (!service || service.isDeleted) {
-    throw new Error("Service not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Service not found");
   }
 
   // If updating category or subCategory, validate them
@@ -44,7 +46,7 @@ const updateService = async (serviceId, updateData) => {
       isDeleted: false,
     });
     if (!categoryExists) {
-      throw new Error("Category not found");
+      throw new ApiError(httpStatus.BAD_REQUEST, "Category not found");
     }
 
     // Validate subCategory exists and belongs to the category
@@ -54,7 +56,8 @@ const updateService = async (serviceId, updateData) => {
       isDeleted: false,
     });
     if (!subCategoryExists) {
-      throw new Error(
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
         "SubCategory not found or does not belong to the specified category"
       );
     }
@@ -67,7 +70,7 @@ const updateService = async (serviceId, updateData) => {
 const getService = async (serviceId) => {
   const service = await Service.findOne({ _id: serviceId, isDeleted: false });
   if (!service) {
-    throw new Error("Service not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Service not found");
   }
   return service;
 };
@@ -184,7 +187,10 @@ const getServicesByCategory = async (categoryId) => {
 };
 
 const getHomeServicesByCategory = async (category) => {
-  const categoryParent = await Category.findOne({ isDeleted: false, _id: category });
+  const categoryParent = await Category.findOne({
+    isDeleted: false,
+    _id: category,
+  });
   const subCategories = await SubCategory.find({ isDeleted: false, category });
   const subCategoriesArr = [];
   for (const subCategory of subCategories) {
@@ -201,8 +207,6 @@ const getHomeServicesByCategory = async (category) => {
 
   return { ...categoryParent.toObject(), subCategory: subCategoriesArr };
 };
-
-
 
 module.exports = {
   createService,

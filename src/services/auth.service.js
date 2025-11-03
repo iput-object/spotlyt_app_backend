@@ -5,7 +5,6 @@ const userService = require("./user.service");
 const tokenService = require("./token.service");
 const { Token } = require("../models");
 
-
 const loginUserWithEmailAndPassword = async (email, password, fcmToken) => {
   const user = await userService.getUserByEmail(email);
   if (!user || !(await user.isPasswordMatch(password))) {
@@ -15,7 +14,6 @@ const loginUserWithEmailAndPassword = async (email, password, fcmToken) => {
   await user.save();
   return user;
 };
-
 
 const logout = async (refreshToken) => {
   const refreshTokenDoc = await Token.findOne({
@@ -29,7 +27,6 @@ const logout = async (refreshToken) => {
   await refreshTokenDoc.deleteOne();
 };
 
-
 const refreshAuth = async (refreshToken) => {
   try {
     const refreshTokenDoc = await tokenService.verifyToken(
@@ -38,7 +35,7 @@ const refreshAuth = async (refreshToken) => {
     );
     const user = await userService.getUserById(refreshTokenDoc.user);
     if (!user) {
-      throw new Error();
+      throw new ApiError(httpStatus.BAD_REQUEST);
     }
     await refreshTokenDoc.remove();
     return tokenService.generateAuthTokens(user);
@@ -47,7 +44,6 @@ const refreshAuth = async (refreshToken) => {
   }
 };
 
-
 const resetPassword = async (newPassword, email) => {
   const user = await userService.getUserByEmail(email);
   if (!user) {
@@ -55,14 +51,23 @@ const resetPassword = async (newPassword, email) => {
   }
 
   if (user.oneTimeCode !== null || user.isResetPassword !== true) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Please verify your email first");
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Please verify your email first"
+    );
   }
 
   if (await user.isPasswordMatch(newPassword)) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "You have previously used this password. Please choose a different one. Try again with a new password.");
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "You have previously used this password. Please choose a different one. Try again with a new password."
+    );
   }
 
-  await userService.updateUserById(user.id, { password: newPassword, isResetPassword: false });
+  await userService.updateUserById(user.id, {
+    password: newPassword,
+    isResetPassword: false,
+  });
 
   return user;
 };
@@ -92,7 +97,7 @@ const verifyEmail = async (reqBody, reqQuery) => {
   console.log("reqBody", email);
   console.log("reqQuery", oneTimeCode);
   const user = await userService.getUserByEmail(email);
-  
+
   // if(user.oneTimeCode === 'verified'){
   //   throw new ApiError(
   //     httpStatus.BAD_REQUEST,

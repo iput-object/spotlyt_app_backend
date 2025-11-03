@@ -1,4 +1,5 @@
 const { Transaction } = require("../models");
+const ApiError = require("../utils/ApiError");
 
 /**
  * Create a transaction record
@@ -43,7 +44,7 @@ const queryTransactions = async (filter, options) => {
 const getTransactionById = async (transactionId) => {
   const transaction = await Transaction.findById(transactionId);
   if (!transaction) {
-    throw new Error("Transaction not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Transaction not found");
   }
   return transaction;
 };
@@ -57,7 +58,7 @@ const getTransactionById = async (transactionId) => {
 const updateTransactionStatus = async (transactionId, status) => {
   const transaction = await Transaction.findById(transactionId);
   if (!transaction) {
-    throw new Error("Transaction not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Transaction not found");
   }
 
   transaction.status = status;

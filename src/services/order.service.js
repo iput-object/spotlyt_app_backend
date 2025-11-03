@@ -1,6 +1,7 @@
 const { Task, Transaction, Order, Service } = require("../models");
 const { createSub } = require("../utils/stripe");
 const transactionService = require("./transaction.service");
+const ApiError = require("../utils/ApiError");
 
 const isTaskDeployed = async (orderId) => {
   const task = await Task.findOne({ order: orderId, status: "approved" });
@@ -11,7 +12,7 @@ const createOrder = async (orderData) => {
   // Validate service exists and get pricing
   const service = await Service.findById(orderData.service);
   if (!service) {
-    throw new Error("Service not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Service not found");
   }
 
   // Calculate total amount
@@ -20,32 +21,46 @@ const createOrder = async (orderData) => {
 
   // console.log({ orderData, service });
 
-  const stripeRes = await createSub({
-    title: service.title,
-    quantity: orderData.quantity,
-    price: service.servicePrice,
-  });
-  console.log(stripeRes.url);
+  // const stripeRes = await createSub({
+  //   title: service.title,
+  //   quantity: orderData.quantity,
+  //   price: service.servicePrice,
+  // });
+  // console.log(stripeRes.url);
+  // // Create payment transaction (mocked for now with stripe)
+  // const payment = await transactionService.createTransaction({
+  //   transactionType: "order",
+  //   status: stripeRes.payment_status, // In production, this would be "pending" until payment gateway confirms
+  //   amount: totalAmount,
+  //   gateway: "stripe",
+  //   transactionId: stripeRes.id,
+  //   performedBy: orderData.orderedBy,
+  //   acceptedBy: orderData.orderedBy, // For orders, user pays themselves
+  // });
+
   // Create payment transaction (mocked for now with stripe)
   const payment = await transactionService.createTransaction({
     transactionType: "order",
-    status: stripeRes.payment_status, // In production, this would be "pending" until payment gateway confirms
+    status: "completed", // In production, this would be "pending" until payment gateway confirms
     amount: totalAmount,
     gateway: "stripe",
-    transactionId: stripeRes.id,
+    transactionId: `order_${Date.now()}_${Math.random()
+      .toString(36)
+      .substr(2, 9)}`,
     performedBy: orderData.orderedBy,
     acceptedBy: orderData.orderedBy, // For orders, user pays themselves
   });
 
   if (!payment) {
-    throw new Error("Transaction failed");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Transaction failed");
   }
 
   orderData.transaction = payment._id;
   orderData.status = "pending";
 
   const order = await Order.create(orderData);
-  return { ...order.toObject(), payment_url: stripeRes.url };
+  // return { ...order.toObject(), payment_url: stripeRes.url };
+  return order;
 };
 
 const queryOrders = async (userId, filter, options) => {
@@ -85,7 +100,7 @@ const getOrderById = async (orderId) => {
     .populate("transaction");
 
   if (!order) {
-    throw new Error("Order not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Order not found");
   }
   return order;
 };
@@ -93,27 +108,33 @@ const getOrderById = async (orderId) => {
 const revokeOrder = async (orderId, userId) => {
   const order = await Order.findById(orderId);
   if (!order) {
-    throw new Error("Order not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Order not found");
   }
 
   // Verify ownership
   if (order.orderedBy.toString() !== userId.toString()) {
-    throw new Error("Not authorized to revoke this order");
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Not authorized to revoke this order"
+    );
   }
 
   // Check if order can be cancelled
   if (order.status === "completed") {
-    throw new Error("Cannot cancel completed order");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Cannot cancel completed order");
   }
 
   if (order.status === "cancelled") {
-    throw new Error("Order already cancelled");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Order already cancelled");
   }
 
   // Check if any tasks have been approved
   const hasApprovedTasks = await isTaskDeployed(orderId);
   if (hasApprovedTasks) {
-    throw new Error("Cannot cancel order with approved tasks");
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Cannot cancel order with approved tasks"
+    );
   }
 
   // Expire all reserved/submitted tasks
@@ -153,14 +174,17 @@ const getUserOrderStats = async (userId) => {
 const updateOrder = async (orderId, updateData) => {
   const order = await Order.findById(orderId);
   if (!order) {
-    throw new Error("Order not found");
+    throw new ApiError(httpStatus.BAD_REQUEST, "Order not found");
   }
 
   // Prevent updating certain fields if order has approved tasks
   if (updateData.status === "cancelled") {
     const hasApprovedTasks = await isTaskDeployed(orderId);
     if (hasApprovedTasks) {
-      throw new Error("Cannot cancel order with approved tasks");
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        "Cannot cancel order with approved tasks"
+      );
     }
   }
 
