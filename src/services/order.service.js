@@ -41,7 +41,7 @@ const createOrder = async (orderData) => {
   // Create payment transaction (mocked for now with stripe)
   const payment = await transactionService.createTransaction({
     transactionType: "order",
-    status: "completed", // In production, this would be "pending" until payment gateway confirms
+    status: "paid", // In production, this would be "pending" until payment gateway confirms
     amount: totalAmount,
     gateway: "stripe",
     transactionId: `order_${Date.now()}_${Math.random()

@@ -12,7 +12,7 @@ const createOrder = {
 
 const getOrders = {
     query: Joi.object().keys({
-        status: Joi.string().valid("pending", "inProgress", "completed", "cancelled"),
+        status: Joi.string().valid( "inProgress", "completed", "cancelled"),
         service: Joi.string().custom(objectId),
         sortBy: Joi.string(),
         limit: Joi.number().integer(),
@@ -32,7 +32,7 @@ const updateOrder = {
     }),
     body: Joi.object()
         .keys({
-            status: Joi.string().valid("pending", "inProgress", "completed", "cancelled"),
+            status: Joi.string().valid( "inProgress", "completed", "cancelled"),
             link: Joi.string().uri(),
             note: Joi.string().allow(""),
         })

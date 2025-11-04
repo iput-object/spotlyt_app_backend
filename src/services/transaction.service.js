@@ -1,21 +1,12 @@
 const { Transaction } = require("../models");
 const ApiError = require("../utils/ApiError");
 
-/**
- * Create a transaction record
- * @param {Object} transactionData
- * @returns {Promise<Transaction>}
- */
+
 const createTransaction = async (transactionData) => {
   return await Transaction.create(transactionData);
 };
 
-/**
- * Query transactions with pagination
- * @param {Object} filter - Mongo filter
- * @param {Object} options - Query options (limit, page, sort, populate)
- * @returns {Promise<QueryResult>}
- */
+
 const queryTransactions = async (filter, options) => {
   const query = {};
 
@@ -36,11 +27,7 @@ const queryTransactions = async (filter, options) => {
   return transactions;
 };
 
-/**
- * Get transaction by ID
- * @param {ObjectId} transactionId
- * @returns {Promise<Transaction>}
- */
+
 const getTransactionById = async (transactionId) => {
   const transaction = await Transaction.findById(transactionId);
   if (!transaction) {
@@ -49,12 +36,7 @@ const getTransactionById = async (transactionId) => {
   return transaction;
 };
 
-/**
- * Update transaction status
- * @param {ObjectId} transactionId
- * @param {string} status - "pending" | "completed" | "failed"
- * @returns {Promise<Transaction>}
- */
+
 const updateTransactionStatus = async (transactionId, status) => {
   const transaction = await Transaction.findById(transactionId);
   if (!transaction) {
@@ -66,32 +48,23 @@ const updateTransactionStatus = async (transactionId, status) => {
   return transaction;
 };
 
-/**
- * Log commission payout when task is approved
- * @param {Object} taskData - { taskId, userId, amount, orderId }
- * @returns {Promise<Transaction>}
- */
+
 const logCommissionPayout = async ({ taskId, userId, amount, orderId }) => {
   return await Transaction.create({
     transactionType: "withdraw",
-    status: "completed",
+    status: "paid",
     amount,
     gateway: "internal",
     transactionId: `commission_${taskId}_${Date.now()}`,
     performedBy: userId,
-    acceptedBy: userId, // Self-accepted for commission
+    acceptedBy: userId,
   });
 };
 
-/**
- * Log refund transaction
- * @param {Object} refundData - { orderId, userId, amount }
- * @returns {Promise<Transaction>}
- */
 const logRefund = async ({ orderId, userId, amount }) => {
   return await Transaction.create({
     transactionType: "refund",
-    status: "completed",
+    status: "paid",
     amount,
     gateway: "stripe",
     transactionId: `refund_${orderId}_${Date.now()}`,

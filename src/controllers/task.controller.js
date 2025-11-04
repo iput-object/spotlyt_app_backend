@@ -109,14 +109,29 @@ const getTaskById = catchAsync(async (req, res) => {
   );
 });
 
-const queryEmployeeTasks = catchAsync(async (req, res) => {
+const queryClaimableTasks = catchAsync(async (req, res) => {
   const userId = req.user.id;
   const filter = pick(req.query, ["status"]);
   const options = pick(req.query, ["sortBy", "limit", "page"]);
-  const tasks = await taskService.queryAvailableTasks(userId, filter, options);
+  const tasks = await taskService.queryClaimableTasks(userId, filter, options);
   res.status(httpStatus.CREATED).json(
     response({
-      message: "Employee Tasks Fetched",
+      message: "Claimable Tasks Fetched",
+      status: "OK",
+      statusCode: httpStatus.CREATED,
+      data: tasks,
+    })
+  );
+});
+
+const queryEmployeeTask = catchAsync(async (req, res) => {
+  const userId = req.user.id;
+  const filter = pick(req.query, ["status"]);
+  const options = pick(req.query, ["sortBy", "limit", "page"]);
+  const tasks = await taskService.queryEmployeeTasks(userId, filter, options);
+  res.status(httpStatus.CREATED).json(
+    response({
+      message: "Claimable Tasks Fetched",
       status: "OK",
       statusCode: httpStatus.CREATED,
       data: tasks,
@@ -132,5 +147,6 @@ module.exports = {
   closeTask,
   queryTasks,
   getTaskById,
-  queryEmployeeTasks,
+  queryClaimableTasks,
+  queryEmployeeTask
 };

@@ -14,7 +14,7 @@ const router = express.Router();
 // Worker routes
 router
   .route("/")
-  .get(auth("employee"), taskController.queryEmployeeTasks);
+  .get(auth("employee"), taskController.queryClaimableTasks);
 router
   .route("/claim/:orderId")
   .post(auth("employee"), validate(taskValidation.claimTask), taskController.claimTask);
@@ -28,7 +28,7 @@ router
     convertHeicToPngMiddleware(UPLOADS_FOLDER_PROOFS),
     taskController.submitTask
   );
-
+router.route('/employee').get(auth('employee'), taskController.queryEmployeeTask)
 // Admin routes
 router.route("/all").get(auth("admin"), validate(taskValidation.getTasks), taskController.queryTasks);
 router

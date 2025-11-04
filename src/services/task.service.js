@@ -2,18 +2,10 @@ const { Task, User, Order, Service } = require("../models");
 const transactionService = require("./transaction.service");
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
+const paginateArray = require("../utils/pagination");
 
-/**
- * Check if user can claim a task for an order
- * @param {ObjectId} orderId
- * @param {ObjectId} userId
- * @returns {Promise<boolean>}
- */
-const canClaimTask = async (orderId, userId) => {
-  const [user, order] = await Promise.all([
-    User.findOne({ _id: userId, isApproved: true }),
-    Order.findById(orderId).populate("orderedBy"),
-  ]);
+const canClaimTask = async (order, userId) => {
+  const user = await User.findOne({ _id: userId, isApproved: true });
 
   if (!user) {
     throw new ApiError(
@@ -31,41 +23,30 @@ const canClaimTask = async (orderId, userId) => {
     throw new ApiError(httpStatus.FORBIDDEN, "Cannot claim your own order");
   }
 
-  // Check if order is still open
   if (order.status === "completed" || order.status === "cancelled") {
     throw new ApiError(httpStatus.FORBIDDEN, "Order is closed");
   }
 
   const taskClaimed = await Task.findOne({
-    order: orderId,
+    order: order._id,
     claimedBy: userId,
   });
 
-  if (
-    taskClaimed.status === "submitted" ||
-    taskClaimed.status === "reserved"
-  ) {
-    throw new ApiApiError(
-      httpStatus.FORBIDDEN,
-      httpStatus.FORBIDDEN,
-      "Your already Occupied the Task!"
-    );
+  if (!taskClaimed) {
+    return true;
   }
 
-  const claimedCount = await Task.countDocuments({ order: orderId });
-  if (claimedCount >= order.quantity) {
+  if (taskClaimed.status === "submitted" || taskClaimed.status === "reserved") {
+    throw new ApiError(httpStatus.FORBIDDEN, "Your already Occupied the Task!");
+  }
+
+  if (order.quantity == 0) {
     throw new ApiError(httpStatus.FORBIDDEN, "All tasks have been claimed");
   }
 
   return true;
 };
 
-/**
- * Claim a task for an order
- * @param {ObjectId} orderId
- * @param {ObjectId} userId
- * @returns {Promise<Task>}
- */
 const claimTask = async (orderId, userId) => {
   await canClaimTask(orderId, userId);
 
@@ -76,19 +57,11 @@ const claimTask = async (orderId, userId) => {
     reservedAt: new Date(),
   });
 
-  // Update order status to inProgress if first task claimed
   await Order.findByIdAndUpdate(orderId, { status: "inProgress" });
 
   return task;
 };
 
-/**
- * Submit a task with proof (screenshot)
- * @param {ObjectId} taskId
- * @param {ObjectId} userId
- * @param {string} screenshotUrl
- * @returns {Promise<Task>}
- */
 const submitTask = async (taskId, userId, screenshotUrl) => {
   const task = await Task.findOne({ _id: taskId, claimedBy: userId });
 
@@ -111,12 +84,6 @@ const submitTask = async (taskId, userId, screenshotUrl) => {
   return task;
 };
 
-/**
- * Approve a task and credit commission to worker
- * @param {ObjectId} taskId
- * @param {ObjectId} adminId
- * @returns {Promise<Task>}
- */
 const approveTask = async (taskId, adminId) => {
   const task = await Task.findById(taskId).populate({
     path: "order",
@@ -156,13 +123,6 @@ const approveTask = async (taskId, adminId) => {
   return task;
 };
 
-/**
- * Reject a task with reason
- * @param {ObjectId} taskId
- * @param {ObjectId} adminId
- * @param {string} reason
- * @returns {Promise<Task>}
- */
 const rejectTask = async (taskId, adminId, reason) => {
   const task = await Task.findById(taskId);
   if (!task) throw new ApiError(httpStatus.FORBIDDEN, "Task not found");
@@ -181,11 +141,6 @@ const rejectTask = async (taskId, adminId, reason) => {
   return task;
 };
 
-/**
- * Check if all tasks for an order are approved and close order
- * @param {ObjectId} orderId
- * @returns {Promise<void>}
- */
 const checkAndCloseOrder = async (orderId) => {
   const order = await Order.findById(orderId);
   if (!order) return;
@@ -203,12 +158,6 @@ const checkAndCloseOrder = async (orderId) => {
   }
 };
 
-/**
- * Manually close a task (admin action)
- * @param {ObjectId} taskId
- * @param {ObjectId} adminId
- * @returns {Promise<Task>}
- */
 const closeTask = async (taskId, adminId) => {
   const task = await Task.findById(taskId);
   if (!task) throw new ApiError(httpStatus.FORBIDDEN, "Task not found");
@@ -225,11 +174,6 @@ const closeTask = async (taskId, adminId) => {
   return task;
 };
 
-/**
- * Auto-expire reserved tasks that haven't been submitted within time limit
- * @param {number} hoursLimit - Hours before expiration (default 24)
- * @returns {Promise<number>} - Number of expired tasks
- */
 const autoExpireReservedTasks = async (hoursLimit = 24) => {
   const expirationTime = new Date(Date.now() - hoursLimit * 60 * 60 * 1000);
 
@@ -249,44 +193,6 @@ const autoExpireReservedTasks = async (hoursLimit = 24) => {
   return result.modifiedCount;
 };
 
-/**
- * Auto-close orders where all tasks are either approved or expired
- * @returns {Promise<number>} - Number of closed orders
- */
-const autoCloseOrders = async () => {
-  // Find all inProgress orders
-  const orders = await Order.find({ status: "inProgress" });
-
-  let closedCount = 0;
-
-  for (const order of orders) {
-    const totalTasks = order.quantity;
-    const tasks = await Task.find({ order: order._id });
-
-    const finishedTasks = tasks.filter(
-      (t) => t.status === "approved" || t.status === "expired"
-    ).length;
-
-    // If all tasks are finished (approved or expired), close the order
-    if (finishedTasks >= totalTasks) {
-      const approvedCount = tasks.filter((t) => t.status === "approved").length;
-
-      // Mark as completed if at least one task was approved, otherwise cancelled
-      order.status = approvedCount > 0 ? "completed" : "cancelled";
-      await order.save();
-      closedCount++;
-    }
-  }
-
-  return closedCount;
-};
-
-/**
- * Query tasks with pagination
- * @param {Object} filter
- * @param {Object} options
- * @returns {Promise<QueryResult>}
- */
 const queryTasks = async (filter, options) => {
   const query = {};
 
@@ -302,11 +208,6 @@ const queryTasks = async (filter, options) => {
   return tasks;
 };
 
-/**
- * Get task by ID with populated fields
- * @param {ObjectId} taskId
- * @returns {Promise<Task>}
- */
 const getTaskById = async (taskId) => {
   const task = await Task.findById(taskId)
     .populate("claimedBy", "fullName email")
@@ -320,33 +221,41 @@ const getTaskById = async (taskId) => {
   return task;
 };
 
-const queryAvailableTasks = async (employeeId, filter, options) => {
+const queryClaimableTasks = async (employeeId, filter, options) => {
   const query = {};
-
   for (const key of Object.keys(filter)) {
     if (filter[key] !== "") query[key] = filter[key];
   }
 
-  const Orders = await Order.paginate(query, options);
+  const allOrders = await Order.find(query).populate("orderedBy");
   const claimableOrders = [];
 
-  for (const order of Orders.results) {
+  for (const order of allOrders) {
     try {
-      await canClaimTask(order._id, employeeId);
-      claimableOrders.push(order);
-    } catch (err) {
-      // Not claimable, skip
-    }
+      const claimedCount = await Task.countDocuments({
+        order: order._id,
+        status: { $nin: ["rejected", "expired"] },
+      });
+
+      // Calculate remaining
+      const remaining = Math.max(order.quantity - claimedCount, 0);
+      order.quantity = remaining;
+      const canClaim = await canClaimTask(order, employeeId);
+      if (canClaim) claimableOrders.push(order);
+    } catch (_) {}
   }
 
-  return {
-    ...Orders,
-    results: claimableOrders,
-    totalResults: claimableOrders.length,
-    totalPages: Math.ceil(claimableOrders.length / Orders.limit) || 1,
-  };
+  return paginateArray(claimableOrders, options);
 };
 
+const queryEmployeeTasks = async (employeeId, filter, options) => {
+  const query = { claimedBy: employeeId };
+  for (const key of Object.keys(filter)) {
+    if (filter[key] !== "") query[key] = filter[key];
+  }
+
+  return await Task.paginate(query, options);
+};
 module.exports = {
   canClaimTask,
   claimTask,
@@ -355,9 +264,8 @@ module.exports = {
   rejectTask,
   closeTask,
   checkAndCloseOrder,
-  autoExpireReservedTasks,
-  autoCloseOrders,
   queryTasks,
   getTaskById,
-  queryAvailableTasks,
+  queryClaimableTasks,
+  queryEmployeeTasks,
 };
