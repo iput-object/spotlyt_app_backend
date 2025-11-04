@@ -1,11 +1,11 @@
 {
 	"info": {
-		"_postman_id": "7bd70c8a-fe60-4e98-bcfe-bacd11fb11cd",
+		"_postman_id": "fb1f1b6b-5e04-4a58-ba21-23d0f82847b5",
 		"name": "Spotlyt API",
 		"description": "Complete API collection for Spotlyte backend",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "48331400",
-		"_collection_link": "https://darkskyofficially-3537713.postman.co/workspace/xd%3F's-Workspace~7b215bbd-647e-48b0-8c64-fa3bf2e5e8cf/collection/48331400-7bd70c8a-fe60-4e98-bcfe-bacd11fb11cd?action=share&source=collection_link&creator=48331400"
+		"_collection_link": "https://darkskyofficially-3537713.postman.co/workspace/xd%3F's-Workspace~7b215bbd-647e-48b0-8c64-fa3bf2e5e8cf/collection/48331400-fb1f1b6b-5e04-4a58-ba21-23d0f82847b5?action=share&source=collection_link&creator=48331400"
 	},
 	"item": [
 		{
@@ -134,7 +134,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"1qazxsw2\"\n}"
+									"raw": "{\n  \"email\": \"employee@gmail.com\",\n  \"password\": \"1qazxsw2\"\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/auth/login",
@@ -827,7 +827,10 @@
 							"name": "Get Homepage Services By Category",
 							"request": {
 								"method": "GET",
-								"header": []
+								"header": [],
+								"url": {
+									"raw": ""
+								}
 							},
 							"response": [
 								{
@@ -861,7 +864,7 @@
 									},
 									"status": "OK",
 									"code": 200,
-									"_postman_previewlanguage": null,
+									"_postman_previewlanguage": "Text",
 									"header": [
 										{
 											"key": "Content-Security-Policy",
@@ -2119,7 +2122,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"service\": \"6904ee162d82d22f201c4b4f\",\n  \"link\": \"https://facebook.com\",\n  \"quantity\": 1000,\n  \"note\": \"dddd instructions here\"\n}"
+									"raw": "{\n  \"service\": \"6909ffcada5f25753a32b476\",\n  \"link\": \"https://linkedin.com\",\n  \"quantity\": 2,\n  \"note\": \"dddd instructions here\"\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/orders",
@@ -3091,7 +3094,7 @@
 					"name": "Tasks",
 					"item": [
 						{
-							"name": "Get My Tasks",
+							"name": "Get Home Tasks",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -3116,11 +3119,6 @@
 										{
 											"key": "limit",
 											"value": "10"
-										},
-										{
-											"key": "status",
-											"value": "in_progress",
-											"disabled": true
 										}
 									]
 								},
@@ -3128,7 +3126,7 @@
 							},
 							"response": [
 								{
-									"name": "SUCCESS",
+									"name": "Get Claimable Tasks(HomePage)",
 									"originalRequest": {
 										"method": "GET",
 										"header": [
@@ -3153,18 +3151,13 @@
 												{
 													"key": "limit",
 													"value": "10"
-												},
-												{
-													"key": "status",
-													"value": "in_progress",
-													"disabled": true
 												}
 											]
 										}
 									},
 									"status": "Created",
 									"code": 201,
-									"_postman_previewlanguage": "Text",
+									"_postman_previewlanguage": "",
 									"header": [
 										{
 											"key": "Content-Security-Policy",
@@ -3224,11 +3217,11 @@
 										},
 										{
 											"key": "Content-Length",
-											"value": "709"
+											"value": "804"
 										},
 										{
 											"key": "ETag",
-											"value": "W/\"2c5-jLoa/C8R13XEZW2qGuMs05OyZJY\""
+											"value": "W/\"324-ikj4LcS95EXlmaI88JvO7bMyUVg\""
 										},
 										{
 											"key": "Vary",
@@ -3236,7 +3229,7 @@
 										},
 										{
 											"key": "Date",
-											"value": "Wed, 29 Oct 2025 07:15:08 GMT"
+											"value": "Tue, 04 Nov 2025 14:24:30 GMT"
 										},
 										{
 											"key": "Connection",
@@ -3248,7 +3241,169 @@
 										}
 									],
 									"cookie": [],
-									"body": "{\n    \"code\": 201,\n    \"message\": \"Employee Tasks Fetched\",\n    \"data\": {\n        \"attributes\": {\n            \"results\": [\n                {\n                    \"service\": \"690121204361d452dcbe4e47\",\n                    \"quantity\": 1,\n                    \"link\": \"https://facebook.com\",\n                    \"note\": \"Don't scam\",\n                    \"amount\": 99.99,\n                    \"transaction\": \"6901bda049611ad5ec2360ef\",\n                    \"orderedBy\": \"69011ea3f94cfb07f26720e9\",\n                    \"status\": \"pending\",\n                    \"createdAt\": \"2025-10-29T07:09:20.307Z\",\n                    \"id\": \"6901bda049611ad5ec2360f1\"\n                },\n                {\n                    \"service\": \"690121204361d452dcbe4e47\",\n                    \"quantity\": 1,\n                    \"link\": \"https://facebook.com\",\n                    \"note\": \"Don't scam\",\n                    \"amount\": 99.99,\n                    \"transaction\": \"6901bdd649611ad5ec2360f8\",\n                    \"orderedBy\": \"69011ea3f94cfb07f26720e9\",\n                    \"status\": \"pending\",\n                    \"createdAt\": \"2025-10-29T07:10:14.564Z\",\n                    \"id\": \"6901bdd649611ad5ec2360fa\"\n                }\n            ],\n            \"page\": 1,\n            \"limit\": 10,\n            \"totalPages\": 1,\n            \"totalResults\": 2\n        }\n    }\n}"
+									"body": "{\n    \"code\": 201,\n    \"message\": \"Claimable Tasks Fetched\",\n    \"data\": {\n        \"attributes\": {\n            \"results\": [\n                {\n                    \"service\": \"6909ffc1da5f25753a32b471\",\n                    \"quantity\": 100,\n                    \"link\": \"https://linkedin.com\",\n                    \"note\": \"dddd instructions here\",\n                    \"amount\": 99,\n                    \"transaction\": \"690a00ed948c41d4ac236442\",\n                    \"orderedBy\": {\n                        \"fullName\": \"Testing Client\",\n                        \"email\": \"client@gmail.com\",\n                        \"avatar\": \"/uploads/users/user.png\",\n                        \"role\": \"client\",\n                        \"callingCode\": null,\n                        \"phoneNumber\": 1734456873,\n                        \"nidNumber\": null,\n                        \"isApproved\": false,\n                        \"dateOfBirth\": \"2000-06-22T00:00:00.000Z\",\n                        \"address\": null,\n                        \"isProfileCompleted\": false,\n                        \"referenceToken\": null,\n                        \"referredBy\": null,\n                        \"balance\": 0,\n                        \"createdAt\": \"2025-11-04T11:46:25.858Z\",\n                        \"id\": \"6909e7910479028dd217bd37\"\n                    },\n                    \"status\": \"inProgress\",\n                    \"createdAt\": \"2025-11-04T13:34:37.293Z\",\n                    \"id\": \"690a00ed948c41d4ac236444\"\n                }\n            ],\n            \"page\": 1,\n            \"limit\": 10,\n            \"totalPages\": 1,\n            \"totalResults\": 1\n        }\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Employee Tasks",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/tasks/employee?page=1&limit=10&status=reserved",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"tasks",
+										"employee"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "status",
+											"value": "reserved"
+										}
+									]
+								},
+								"description": "Get tasks assigned to current employee"
+							},
+							"response": [
+								{
+									"name": "Get Employee Tasks",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{token}}"
+											}
+										],
+										"url": {
+											"raw": "{{base_url}}/tasks/employee?page=1&limit=10&status=reserved",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"tasks",
+												"employee"
+											],
+											"query": [
+												{
+													"key": "page",
+													"value": "1"
+												},
+												{
+													"key": "limit",
+													"value": "10"
+												},
+												{
+													"key": "status",
+													"value": "reserved"
+												}
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "",
+									"header": [
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Cross-Origin-Opener-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Cross-Origin-Resource-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Origin-Agent-Cluster",
+											"value": "?1"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-DNS-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "0"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "441"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"1b9-cFDmoq189/sBl+UNgDFTltnvCq0\""
+										},
+										{
+											"key": "Vary",
+											"value": "Accept-Encoding"
+										},
+										{
+											"key": "Date",
+											"value": "Tue, 04 Nov 2025 14:24:04 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"code\": 201,\n    \"message\": \"Claimable Tasks Fetched\",\n    \"data\": {\n        \"attributes\": {\n            \"results\": [\n                {\n                    \"order\": \"690a012f948c41d4ac23644a\",\n                    \"claimedBy\": \"6909e7910479028dd217bd35\",\n                    \"status\": \"reserved\",\n                    \"reservedAt\": \"2025-11-04T14:21:47.395Z\",\n                    \"submittedAt\": null,\n                    \"approvedBy\": null,\n                    \"approvedAt\": null,\n                    \"rejectedReason\": null,\n                    \"commissionAmount\": 0,\n                    \"createdAt\": \"2025-11-04T14:21:47.414Z\",\n                    \"id\": \"690a0bfbf228553ff3002a95\"\n                }\n            ],\n            \"page\": 1,\n            \"limit\": 10,\n            \"totalPages\": 1,\n            \"totalResults\": 1\n        }\n    }\n}"
 								}
 							]
 						},
@@ -3283,7 +3438,7 @@
 									"variable": [
 										{
 											"key": "orderId",
-											"value": "order_id_here"
+											"value": "690a012f948c41d4ac23644a"
 										}
 									]
 								},
@@ -3436,8 +3591,8 @@
 										},
 										{
 											"key": "image",
-											"value": "",
-											"type": "file"
+											"type": "file",
+											"src": "/home/iput-object/Pictures/wallpaper/photo_2025-09-29_11-22-33.jpg"
 										}
 									]
 								},
@@ -3454,7 +3609,7 @@
 									"variable": [
 										{
 											"key": "taskId",
-											"value": "task_id_here"
+											"value": "690a0bfbf228553ff3002a95"
 										}
 									]
 								},
@@ -3804,7 +3959,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"Corporate Plartform\"\n}"
+									"raw": "{\n  \"name\": \"Corporate Platforms\"\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/categories",
@@ -4265,7 +4420,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"instagram\",\n  \"category\": \"6904ec972d82d22f201c4b2e\"\n}"
+									"raw": "{\n  \"name\": \"linkedin\",\n  \"category\": \"6909ff2bda5f25753a32b454\"\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/sub-categories",
@@ -4726,7 +4881,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"title\": \"Organic Share and Views\",\n  \"servicePrice\": 99.99, // Individual per cent\n  \"serviceCommission\": 50, // Commission Goes to the Employee\n  \"subCategory\": \"6904ed0e2d82d22f201c4b3d\",\n  \"category\" : \"6904ec972d82d22f201c4b2e\"\n}"
+									"raw": "{\n  \"title\": \"Organic Likes and Views\",\n  \"servicePrice\": 0.99, // Individual per cent\n  \"serviceCommission\": 0.50, // Commission Goes to the Employee\n  \"subCategory\": \"6909ff84da5f25753a32b46b\",\n  \"category\" : \"6909ff2bda5f25753a32b454\"\n}"
 								},
 								"url": {
 									"raw": "{{base_url}}/services",
@@ -5201,7 +5356,10 @@
 							"name": "Get Services by Category",
 							"request": {
 								"method": "GET",
-								"header": []
+								"header": [],
+								"url": {
+									"raw": ""
+								}
 							},
 							"response": []
 						},
@@ -5246,7 +5404,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/orders/admin/all?page=1&limit=10",
+									"raw": "{{base_url}}/orders/admin/all?page=1&limit=10&status=inProgress",
 									"host": [
 										"{{base_url}}"
 									],
@@ -5266,8 +5424,7 @@
 										},
 										{
 											"key": "status",
-											"value": "pending",
-											"disabled": true
+											"value": "inProgress"
 										},
 										{
 											"key": "userId",
@@ -5580,7 +5737,7 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/tasks/all?page=1&limit=10&status=approved",
+									"raw": "{{base_url}}/tasks/all?page=1&limit=10&status=submitted",
 									"host": [
 										"{{base_url}}"
 									],
@@ -5598,10 +5755,6 @@
 											"value": "10"
 										},
 										{
-											"key": "status",
-											"value": "approved"
-										},
-										{
 											"key": "claimedBy",
 											"value": "employee_id_here",
 											"disabled": true
@@ -5610,6 +5763,10 @@
 											"key": "order",
 											"value": "order_id_here",
 											"disabled": true
+										},
+										{
+											"key": "status",
+											"value": "submitted"
 										}
 									]
 								},
@@ -5826,6 +5983,19 @@
 							"response": []
 						}
 					]
+				},
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "Approve Employee",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
 				}
 			],
 			"auth": {
@@ -5904,6 +6074,10 @@
 			"value": ""
 		},
 		{
+			"key": "adminAccessToken",
+			"value": ""
+		},
+		{
 			"key": "accessToken",
 			"value": ""
 		},
@@ -5912,7 +6086,7 @@
 			"value": ""
 		},
 		{
-			"key": "adminAccessToken",
+			"key": "employeeAccessToken",
 			"value": ""
 		}
 	]
