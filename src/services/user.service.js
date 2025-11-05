@@ -14,7 +14,6 @@ const createUser = async (userBody) => {
     .toString(36)
     .substring(2, 8)
     .toUpperCase();
-  console.log(referenceToken);
 
   if (
     userBody.role === "client" ||
@@ -111,6 +110,14 @@ const isUpdateUser = async (userId, updateBody) => {
   await user.save();
   return user;
 };
+
+const applyEmployeeApproval = async (user, data) => {
+  if (user.isApproved) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Employee is already Approved");
+  }
+  data.isProfileCompleted = true;
+  return await User.findOneAndUpdate({ _id: user.id }, data, { new: true });
+};
 module.exports = {
   createUser,
   queryUsers,
@@ -119,4 +126,5 @@ module.exports = {
   updateUserById,
   deleteUserById,
   isUpdateUser,
+  applyEmployeeApproval,
 };

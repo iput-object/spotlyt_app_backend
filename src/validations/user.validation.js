@@ -5,14 +5,14 @@ const createUser = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
-    name: Joi.string().required(),
+    fullName: Joi.string().required(),
     role: Joi.string().required().valid("employee", "client"),
   }),
 };
 
 const getUsers = {
   query: Joi.object().keys({
-    name: Joi.string(),
+    fullName: Joi.string(),
     role: Joi.string(),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
@@ -28,20 +28,29 @@ const getUser = {
 
 const updateUser = {
   file: Joi.object().keys({
-    filename: Joi.string().required(),
+    avatar: Joi.string().required(),
   }),
-  body: Joi.object()
-    .keys({
-      firstName: Joi.string(),
-      lastName: Joi.string(),
-      fullName: Joi.string(),
-      // email: Joi.string().email(),
-      phoneNumber: Joi.string(),
-      callingCode: Joi.string(),
-      nidNumber: Joi.string(),
-      dataOfBirth: Joi.string(),
-      address: Joi.string(),
-    })
+  body: Joi.object().keys({
+    fullName: Joi.string(),
+    phoneNumber: Joi.string(),
+    callingCode: Joi.string(),
+    dateOfBirth: Joi.string(),
+    address: Joi.string(),
+  }),
+};
+
+const applyEmployeeApproval = {
+  file: Joi.object().keys({
+    avatar: Joi.string().required(),
+  }),
+  body: Joi.object().keys({
+    fullName: Joi.string(),
+    phoneNumber: Joi.string(),
+    callingCode: Joi.string(),
+    dateOfBirth: Joi.string(),
+    address: Joi.string(),
+    nidNumber: Joi.number().required(),
+  }),
 };
 
 const deleteUser = {
@@ -50,10 +59,7 @@ const deleteUser = {
   }),
 };
 
-
-const getHome = {
-
-};
+const getHome = {};
 
 module.exports = {
   getHome,
@@ -62,4 +68,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  applyEmployeeApproval,
 };

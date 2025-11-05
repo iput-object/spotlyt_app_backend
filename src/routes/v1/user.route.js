@@ -22,7 +22,12 @@ router
     convertHeicToPngMiddleware(UPLOADS_FOLDER_USERS),
     userController.updateProfile
   );
-
-  
+router
+  .route("/employee/apply")
+  .post(
+    auth("employee"),
+    validate(userValidation.applyEmployeeApproval),
+    userController.applyEmployeeApproval
+  );
 
 module.exports = router;

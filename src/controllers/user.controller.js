@@ -19,7 +19,7 @@ const createUser = catchAsync(async (req, res) => {
 });
 
 const getUsers = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ["fullName", "role", "isApproved", ]);
+  const filter = pick(req.query, ["fullName", "role", "isApproved"]);
   const options = pick(req.query, ["sortBy", "limit", "page"]);
   const result = await userService.queryUsers(filter, options);
   res.status(httpStatus.OK).json(
@@ -110,7 +110,9 @@ const updateProfile = catchAsync(async (req, res) => {
 
   // Set fullName if firstName or lastName is provided
   if (!req.body.fullName && (req.body.firstName || req.body.lastName)) {
-    req.body.fullName = `${req.body.firstName || ''} ${req.body.lastName || ''}`.trim();
+    req.body.fullName = `${req.body.firstName || ""} ${
+      req.body.lastName || ""
+    }`.trim();
   }
 
   const user = await userService.updateUserById(req.user.id, req.body);
@@ -137,6 +139,17 @@ const deleteUser = catchAsync(async (req, res) => {
   );
 });
 
+const applyEmployeeApproval = catchAsync(async (req, res) => {
+  const resp = await userService.applyEmployeeApproval(req.user.id);
+  res.status(httpStatus.OK).json(
+    response({
+      message: "Applied For Approval",
+      status: "OK",
+      statusCode: httpStatus.OK,
+      data: resp,
+    })
+  );
+});
 
 module.exports = {
   createUser,
@@ -146,4 +159,5 @@ module.exports = {
   updateUser,
   updateProfile,
   deleteUser,
+  applyEmployeeApproval,
 };
