@@ -1,3 +1,4 @@
+const httpStatus = require("http-status");
 const { Service, Category, SubCategory } = require("../models");
 const ApiError = require("../utils/ApiError");
 

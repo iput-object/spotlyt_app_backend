@@ -31,6 +31,10 @@ const canClaimTask = async (order, userId) => {
     order: order._id,
     claimedBy: userId,
   });
+  
+  if (order.quantity == 0) {
+    throw new ApiError(httpStatus.FORBIDDEN, "All tasks have been claimed");
+  }
 
   if (!taskClaimed) {
     return true;
@@ -40,9 +44,6 @@ const canClaimTask = async (order, userId) => {
     throw new ApiError(httpStatus.FORBIDDEN, "Your already Occupied the Task!");
   }
 
-  if (order.quantity == 0) {
-    throw new ApiError(httpStatus.FORBIDDEN, "All tasks have been claimed");
-  }
 
   return true;
 };
