@@ -112,11 +112,15 @@ const isUpdateUser = async (userId, updateBody) => {
 };
 
 const applyEmployeeApproval = async (user, data) => {
+  console.log(user)
   if (user.isApproved) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Employee is already Approved");
   }
-  data.isProfileCompleted = true;
-  return await User.findOneAndUpdate({ _id: user.id }, data, { new: true });
+  return await User.findOneAndUpdate(
+    { _id: user.id },
+    { ...data, isProfileCompleted: true },
+    { new: true }
+  );
 };
 module.exports = {
   createUser,

@@ -140,7 +140,7 @@ const deleteUser = catchAsync(async (req, res) => {
 });
 
 const applyEmployeeApproval = catchAsync(async (req, res) => {
-  const resp = await userService.applyEmployeeApproval(req.user.id);
+  const resp = await userService.applyEmployeeApproval(req.user);
   res.status(httpStatus.OK).json(
     response({
       message: "Applied For Approval",
@@ -150,6 +150,7 @@ const applyEmployeeApproval = catchAsync(async (req, res) => {
     })
   );
 });
+
 
 module.exports = {
   createUser,
