@@ -26,15 +26,14 @@ const canClaimTask = async (order, userId) => {
   if (order.status === "completed" || order.status === "cancelled") {
     throw new ApiError(httpStatus.FORBIDDEN, "Order is closed");
   }
-
-  const taskClaimed = await Task.findOne({
-    order: order._id,
-    claimedBy: userId,
-  });
   
   if (order.quantity == 0) {
     throw new ApiError(httpStatus.FORBIDDEN, "All tasks have been claimed");
   }
+  const taskClaimed = await Task.findOne({
+    order: order._id,
+    claimedBy: userId,
+  });
 
   if (!taskClaimed) {
     return true;
