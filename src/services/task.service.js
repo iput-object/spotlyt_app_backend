@@ -48,7 +48,8 @@ const canClaimTask = async (order, userId) => {
 };
 
 const claimTask = async (orderId, userId) => {
-  await canClaimTask(orderId, userId);
+  const order = await Order.findById(orderId);
+  await canClaimTask(order, userId);
 
   const task = await Task.create({
     order: orderId,
@@ -57,7 +58,14 @@ const claimTask = async (orderId, userId) => {
     reservedAt: new Date(),
   });
 
-  await Order.findByIdAndUpdate(orderId, { status: "inProgress" });
+  setTimeout(async () => {
+    const eTask = await Task.findOne({ _id: task._id });
+    if (eTask && eTask.status === "reserved") {
+      eTask.status = "expired";
+      await eTask.save();
+      console.log(`Task expired for -> ${task._id}`);
+    }
+  }, 10 * 60 * 1000);
 
   return task;
 };
