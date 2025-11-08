@@ -3,7 +3,7 @@ const { password } = require("./custom.validation");
 
 const register = {
   body: Joi.object().keys({
-    fullName: Joi.string(),
+    name: Joi.string(),
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
     role: Joi.string().required().valid("client", "employee"), // Removed "admin" to prevent admin registration.

@@ -4,7 +4,7 @@ const { User } = require("../models");
 
 const usersData = [
   {
-    fullName: "Testing Admin",
+    name: "Testing Admin",
     email: "admin@gmail.com",
     phoneNumber: "01735566789",
     password: "$2a$08$cUQ3uMdbQjlyDF/dgn5mNuEt9fLJZqq8TaT9aKabrFuG5wND3/mPO", // password: 1qazxsw2
@@ -12,7 +12,7 @@ const usersData = [
     isEmailVerified: true,
   },
   {
-    fullName: "Testing Employee",
+    name: "Testing Employee",
     email: "employee@gmail.com",
     phoneNumber: "01735566789",
     password: "$2a$08$cUQ3uMdbQjlyDF/dgn5mNuEt9fLJZqq8TaT9aKabrFuG5wND3/mPO",
@@ -21,7 +21,7 @@ const usersData = [
     isApproved: true,
   },
   {
-    fullName: "Testing Employee 2",
+    name: "Testing Employee 2",
     email: "employee2@gmail.com",
     phoneNumber: "01735566789",
     password: "$2a$08$cUQ3uMdbQjlyDF/dgn5mNuEt9fLJZqq8TaT9aKabrFuG5wND3/mPO",
@@ -29,9 +29,9 @@ const usersData = [
     isEmailVerified: true,
     isApproved: true,
   },
-  
+
   {
-    fullName: "Testing Client",
+    name: "Testing Client",
     email: "client@gmail.com",
     phoneNumber: "01734456873",
     dateOfBirth: "2000-06-22",
@@ -40,7 +40,7 @@ const usersData = [
     isEmailVerified: true,
   },
   {
-    fullName: "Testing Client 2",
+    name: "Testing Client 2",
     email: "client2@gmail.com",
     phoneNumber: "01734456873",
     dateOfBirth: "2000-06-22",

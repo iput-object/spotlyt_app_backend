@@ -6,11 +6,18 @@ const { transactionValidation } = require("../../validations");
 
 const router = express.Router();
 
-// Get transactions (admin can see all, users see their own)
+router
+  .route("/user")
+  .get(
+    auth("common"),
+    validate(transactionValidation.getUserTransactions),
+    transactionController.queryUserTransactions
+  );
+
 router
   .route("/")
   .get(
-    auth("common"),
+    auth("admin"),
     validate(transactionValidation.getTransactions),
     transactionController.queryTransactions
   )

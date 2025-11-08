@@ -27,6 +27,29 @@ const queryTransactions = catchAsync(async (req, res) => {
   );
 });
 
+const queryUserTransactions = catchAsync(async (req, res) => {
+  const filter = pick(req.query, [
+    "transactionType",
+    "status",
+    "gateway",
+    "transactionId",
+  ]);
+  const options = pick(req.query, ["sortBy", "limit", "page"]);
+  const transactions = await transactionService.queryTransactions(
+    req.user.id,
+    filter,
+    options
+  );
+  res.status(httpStatus.OK).json(
+    response({
+      message: "Transactions Fetched",
+      status: "OK",
+      statusCode: httpStatus.OK,
+      data: transactions,
+    })
+  );
+});
+
 const getTransactionById = catchAsync(async (req, res) => {
   const transactionId = req.params.transactionId;
   const transaction = await transactionService.getTransactionById(
@@ -80,4 +103,5 @@ module.exports = {
   getTransactionById,
   updateTransactionStatus,
   createTransaction,
+  queryUserTransactions,
 };

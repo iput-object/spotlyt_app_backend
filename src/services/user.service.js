@@ -26,12 +26,17 @@ const createUser = async (userBody) => {
 };
 
 const queryUsers = async (filter, options) => {
-  const query = {};
+  const query = { isDeleted: false };
 
   // Loop through each filter field and add conditions if they exist
   for (const key of Object.keys(filter)) {
     if (
-      (key === "fullName" || key === "email" || key === "username") &&
+      (key === "name" ||
+        key === "email" ||
+        key === "role" ||
+        key === "phoneNumber" ||
+        key === "nidNumber" ||
+        key === "dateOfBirth") &&
       filter[key] !== ""
     ) {
       query[key] = { $regex: filter[key], $options: "i" }; // Case-insensitive regex search for name
@@ -112,7 +117,7 @@ const isUpdateUser = async (userId, updateBody) => {
 };
 
 const applyEmployeeApproval = async (user, data) => {
-  console.log(user)
+  console.log(user);
   if (user.isApproved) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Employee is already Approved");
   }
@@ -121,6 +126,44 @@ const applyEmployeeApproval = async (user, data) => {
     { ...data, isProfileCompleted: true },
     { new: true }
   );
+};
+
+const getEmployees = async (filter, options) => {
+  const query = { isDeleted: false, role: "employee" };
+
+  for (const key of Object.keys(filter)) {
+    if (key === "name" && filter[key] !== "") {
+      query[key] = { $regex: filter[key], $options: "i" }; // Case-insensitive regex search for name
+    } else if (filter[key] !== "") {
+      query[key] = filter[key];
+    }
+  }
+
+  const employees = await User.paginate(query, options);
+
+  return employees;
+};
+
+const approveEmployee = async (employeeId) => {
+  const employee = await User.findOne({
+    _id: employeeId,
+    role: "employee",
+    isDeleted: false,
+  });
+  if (!employee) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Employee Not Found");
+  }
+  if (!employee.isProfileCompleted) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "Employee Didn't Provide Sufficient Data"
+    );
+  }
+  if (employee.isApproved) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Employee Already Approved");
+  }
+  employee.isApproved = true;
+  return await employee.save();
 };
 module.exports = {
   createUser,
@@ -131,4 +174,6 @@ module.exports = {
   deleteUserById,
   isUpdateUser,
   applyEmployeeApproval,
+  getEmployees,
+  approveEmployee,
 };

@@ -13,11 +13,11 @@ const router = express.Router();
 
 router
   .route("/homepage")
-  .get(auth("common"), serviceController.getHomePageServices);
+  .get(auth("employee"), serviceController.getHomePageServices);
 
 router
   .route("/homepage/category/:category")
-  .get(auth("common"), serviceController.getHomeServicesByCategory);
+  .get(auth("employee"), serviceController.getHomeServicesByCategory);
 
 router
   .route("/")
@@ -36,8 +36,8 @@ router
     validate(serviceValidation.updateService),
     serviceController.updateService
   );
-router.route("/:serviceId").get(auth("common"), serviceController.getService);
-router.route("/").get(auth("common"), serviceController.getServices);
+router.route("/:serviceId").get(auth("employee"), serviceController.getService);
+router.route("/").get(auth("admin"), serviceController.getServices);
 router
   .route("/categories/all")
   .get(auth("admin"), serviceController.getAllServiceCategories);

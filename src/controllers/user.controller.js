@@ -19,7 +19,17 @@ const createUser = catchAsync(async (req, res) => {
 });
 
 const getUsers = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ["fullName", "role", "isApproved"]);
+  const filter = pick(req.query, [
+    "name",
+    "role",
+    "isApproved",
+    "email",
+    "phoneNumber",
+    "nidNumber",
+    "dateOfBirth",
+    "isEmailVerified",
+    "isProfileCompleted",
+  ]);
   const options = pick(req.query, ["sortBy", "limit", "page"]);
   const result = await userService.queryUsers(filter, options);
   res.status(httpStatus.OK).json(
@@ -108,9 +118,9 @@ const updateProfile = catchAsync(async (req, res) => {
     req.body.image = `/uploads/users/${req.file.filename}`;
   }
 
-  // Set fullName if firstName or lastName is provided
-  if (!req.body.fullName && (req.body.firstName || req.body.lastName)) {
-    req.body.fullName = `${req.body.firstName || ""} ${
+  // Set name if firstName or lastName is provided
+  if (!req.body.name && (req.body.firstName || req.body.lastName)) {
+    req.body.name = `${req.body.firstName || ""} ${
       req.body.lastName || ""
     }`.trim();
   }
@@ -151,6 +161,37 @@ const applyEmployeeApproval = catchAsync(async (req, res) => {
   );
 });
 
+const getEmployees = catchAsync(async (req, res) => {
+  const filter = pick(req.query, ["name", "isApproved", "isProfileCompleted"]);
+  const options = pick(req.query, ["sortBy", "limit", "page"]);
+  const resp = await userService.getEmployees(filter, options);
+
+  res.status(httpStatus.OK).json(
+    response({
+      message: "Employee List",
+      status: "OK",
+      statusCode: httpStatus.OK,
+      data: resp,
+    })
+  );
+});
+
+const approveEmployee = catchAsync(async (req, res) => {
+  const employeeId = req.params.employeeId;
+  if (!employeeId) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Employee Id is Required.");
+  }
+  const approveResp = await userService.approveEmployee(req.params.employeeId);
+
+  res.status(httpStatus.OK).json(
+    response({
+      message: "Employee Approved",
+      status: "OK",
+      statusCode: httpStatus.OK,
+      data: approveResp,
+    })
+  );
+});
 
 module.exports = {
   createUser,
@@ -161,4 +202,6 @@ module.exports = {
   updateProfile,
   deleteUser,
   applyEmployeeApproval,
+  getEmployees,
+  approveEmployee,
 };

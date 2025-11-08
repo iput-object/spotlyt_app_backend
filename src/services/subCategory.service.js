@@ -39,7 +39,7 @@ const updateSubCategory = async (subCategoryId, updateData) => {
 const getSubCategory = async (subCategoryId) => {
   const subCategory = await SubCategory.findById(subCategoryId).populate([
     { path: "category", select: "name" },
-    { path: "createdBy", select: "fullName" },
+    { path: "createdBy", select: "name" },
   ]);
   if (!subCategory || subCategory.isDeleted) {
     throw new ApiError(httpStatus.BAD_REQUEST, "SubCategory not found");

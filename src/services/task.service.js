@@ -26,7 +26,7 @@ const canClaimTask = async (order, userId) => {
   if (order.status === "completed" || order.status === "cancelled") {
     throw new ApiError(httpStatus.FORBIDDEN, "Order is closed");
   }
-  
+
   if (order.quantity == 0) {
     throw new ApiError(httpStatus.FORBIDDEN, "All tasks have been claimed");
   }
@@ -42,7 +42,6 @@ const canClaimTask = async (order, userId) => {
   if (taskClaimed.status === "submitted" || taskClaimed.status === "reserved") {
     throw new ApiError(httpStatus.FORBIDDEN, "Your already Occupied the Task!");
   }
-
 
   return true;
 };
@@ -218,12 +217,12 @@ const queryTasks = async (filter, options) => {
 
 const getTaskById = async (taskId) => {
   const task = await Task.findById(taskId)
-    .populate("claimedBy", "fullName email")
+    .populate("claimedBy", "name email")
     .populate({
       path: "order",
       populate: { path: "service orderedBy" },
     })
-    .populate("approvedBy", "fullName email");
+    .populate("approvedBy", "name email");
 
   if (!task) throw new ApiError(httpStatus.FORBIDDEN, "Task not found");
   return task;

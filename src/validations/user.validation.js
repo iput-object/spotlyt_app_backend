@@ -5,14 +5,14 @@ const createUser = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
-    fullName: Joi.string().required(),
+    name: Joi.string().required(),
     role: Joi.string().required().valid("employee", "client"),
   }),
 };
 
 const getUsers = {
   query: Joi.object().keys({
-    fullName: Joi.string(),
+    name: Joi.string(),
     role: Joi.string(),
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
@@ -31,7 +31,7 @@ const updateUser = {
     avatar: Joi.string().required(),
   }),
   body: Joi.object().keys({
-    fullName: Joi.string(),
+    name: Joi.string(),
     phoneNumber: Joi.string(),
     callingCode: Joi.string(),
     dateOfBirth: Joi.string(),
@@ -44,7 +44,7 @@ const applyEmployeeApproval = {
     avatar: Joi.string().required(),
   }),
   body: Joi.object().keys({
-    fullName: Joi.string(),
+    name: Joi.string(),
     phoneNumber: Joi.string(),
     callingCode: Joi.string(),
     dateOfBirth: Joi.string(),

@@ -29,5 +29,10 @@ router
     validate(userValidation.applyEmployeeApproval),
     userController.applyEmployeeApproval
   );
+router.route("/employee").get(auth("admin"), userController.getEmployees);
+router
+  .route("/employee/approve/:employeeId")
+  .post(auth("admin"), userController.approveEmployee);
 
+router.route('/').get(auth('admin'), userController.getUsers)
 module.exports = router;

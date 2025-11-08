@@ -97,7 +97,7 @@ const queryAllOrders = async (filter, options) => {
 const getOrderById = async (orderId) => {
   const order = await Order.findById(orderId)
     .populate("service")
-    .populate("orderedBy", "fullName email")
+    .populate("orderedBy", "name email")
     .populate("transaction");
 
   if (!order) {

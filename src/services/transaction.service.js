@@ -1,11 +1,9 @@
 const { Transaction } = require("../models");
 const ApiError = require("../utils/ApiError");
 
-
 const createTransaction = async (transactionData) => {
   return await Transaction.create(transactionData);
 };
-
 
 const queryTransactions = async (filter, options) => {
   const query = {};
@@ -27,6 +25,25 @@ const queryTransactions = async (filter, options) => {
   return transactions;
 };
 
+const queryUserTransactions = async (userId, filter, options) => {
+  const query = { performedBy: userId };
+
+  for (const key of Object.keys(filter)) {
+    if (
+      (key === "transactionType" || key === "status" || key === "gateway") &&
+      filter[key] !== ""
+    ) {
+      query[key] = filter[key];
+    } else if (key === "transactionId" && filter[key] !== "") {
+      query[key] = { $regex: filter[key], $options: "i" };
+    } else if (filter[key] !== "") {
+      query[key] = filter[key];
+    }
+  }
+
+  const transactions = await Transaction.paginate(query, options);
+  return transactions;
+};
 
 const getTransactionById = async (transactionId) => {
   const transaction = await Transaction.findById(transactionId);
@@ -35,7 +52,6 @@ const getTransactionById = async (transactionId) => {
   }
   return transaction;
 };
-
 
 const updateTransactionStatus = async (transactionId, status) => {
   const transaction = await Transaction.findById(transactionId);
@@ -47,7 +63,6 @@ const updateTransactionStatus = async (transactionId, status) => {
   await transaction.save();
   return transaction;
 };
-
 
 const logCommissionPayout = async ({ taskId, userId, amount, orderId }) => {
   return await Transaction.create({
@@ -80,4 +95,5 @@ module.exports = {
   updateTransactionStatus,
   logCommissionPayout,
   logRefund,
+  queryUserTransactions,
 };

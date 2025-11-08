@@ -169,7 +169,7 @@ const getServicesBySubCategory = async (subCategoryId) => {
   })
     .populate("category", "name")
     .populate("subCategory", "name category")
-    .populate("createdBy", "fullName email");
+    .populate("createdBy", "name email");
 
   return services;
 };
@@ -181,7 +181,7 @@ const getServicesByCategory = async (categoryId) => {
   })
     .populate("category", "name")
     .populate("subCategory", "name category")
-    .populate("createdBy", "fullName email")
+    .populate("createdBy", "name email")
     .lean();
 
   return services;
