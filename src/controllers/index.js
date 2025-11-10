@@ -6,3 +6,4 @@ module.exports.taskController = require('./task.controller');
 module.exports.transactionController = require('./transaction.controller');
 module.exports.categoryController = require('./category.controller');
 module.exports.subCategoryController = require('./subCategory.controller');
+module.exports.dashboardController = require('./dashboard.controller');

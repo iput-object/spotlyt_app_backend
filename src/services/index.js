@@ -8,3 +8,4 @@ module.exports.taskService = require('./task.service');
 module.exports.transactionService = require('./transaction.service');
 module.exports.categoryService = require('./category.service');
 module.exports.subCategoryService = require('./subCategory.service');
+module.exports.dashboardService = require('./dashboard.service');
