@@ -9,7 +9,8 @@ const taskRoute = require("./task.route");
 const transactionRoute = require("./transaction.route");
 const categoryRoute = require("./category.route");
 const subCategoryRoute = require("./subCategory.route");
-const dashboardRoute = require('./dashboard.route')
+const dashboardRoute = require("./dashboard.route");
+const aboutRoute = require("./about.route");
 
 const router = express.Router();
 
@@ -45,12 +46,15 @@ const defaultRoutes = [
   {
     path: "/sub-categories",
     route: subCategoryRoute,
-  
   },
   {
-    path:'/dashboard'
-    ,route: dashboardRoute
-  }
+    path: "/dashboard",
+    route: dashboardRoute,
+  },
+  {
+    path: "/settings",
+    route: aboutRoute,
+  },
 ];
 
 const devRoutes = [

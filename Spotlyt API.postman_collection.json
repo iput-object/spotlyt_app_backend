@@ -1,11 +1,11 @@
 {
 	"info": {
-		"_postman_id": "7f603dd0-e759-4ac5-a01d-85f97a58dd4a",
+		"_postman_id": "2e12c5bb-ed83-4b1b-8d20-8360928da26a",
 		"name": "Spotlyt API",
 		"description": "Complete API collection for Spotlyte backend",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "48331400",
-		"_collection_link": "https://darkskyofficially-3537713.postman.co/workspace/xd%3F's-Workspace~7b215bbd-647e-48b0-8c64-fa3bf2e5e8cf/collection/48331400-7f603dd0-e759-4ac5-a01d-85f97a58dd4a?action=share&source=collection_link&creator=48331400"
+		"_collection_link": "https://darkskyofficially-3537713.postman.co/workspace/xd%3F's-Workspace~7b215bbd-647e-48b0-8c64-fa3bf2e5e8cf/collection/48331400-2e12c5bb-ed83-4b1b-8d20-8360928da26a?action=share&source=collection_link&creator=48331400"
 	},
 	"item": [
 		{
@@ -7332,6 +7332,321 @@
 									],
 									"path": [
 										"users"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Dashboard",
+					"item": [
+						{
+							"name": "Get Dashboard Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/dashboard/all",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"dashboard",
+										"all"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get incomes Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/dashboard/incomes",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"dashboard",
+										"incomes"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/dashboard/users",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"dashboard",
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Orders Stats",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/dashboard/orders",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"dashboard",
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Stats Summary",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/dashboard",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"dashboard"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Settings",
+					"item": [
+						{
+							"name": "Create/Modify AboutUs",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"content\":\"this is a content\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/settings/about",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"settings",
+										"about"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get About Us",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/settings/about",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"settings",
+										"about"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create/Modify TermsAndCondition",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"content\": \"John Dozzze\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/settings/terms",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"settings",
+										"terms"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get TermsAndCondition",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"content\": \"John Dozzze\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/settings/terms",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"settings",
+										"terms"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create/Modify PrivacyPolicy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"content\": \"John Dozzze\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/settings/privacy",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"settings",
+										"privacy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get PrivacyPolicy",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"content\": \"John Dozzze\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/settings/privacy",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"settings",
+										"privacy"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create/Modify Support",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"content\": \"John Dozzze\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/settings/support",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"settings",
+										"support"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Support",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"content\": \"John Dozzze\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/settings/support",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"settings",
+										"support"
 									]
 								}
 							},
